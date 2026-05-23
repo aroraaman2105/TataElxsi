@@ -6,6 +6,7 @@ import Assessments from './pages/Assessments';
 import Sessions from './pages/Sessions';
 import Settings from './pages/Settings';
 import MasimScreening from './pages/MasimScreening';
+import TherapyPlanning from './pages/TherapyPlanning';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/dashboard" element={<Layout />}>
         <Route index element={<Dashboard />} />
         <Route path="masim" element={<MasimScreening />} />
+        <Route path="therapy" element={<TherapyPlanning />} />
         <Route path="assessments" element={<Assessments />} />
         <Route path="sessions" element={<Sessions />} />
         <Route path="settings" element={<Settings />} />
