@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Button } from '../components/design-system';
+import ExplainableAIPanel from '../components/masim/ExplainableAIPanel';
 
 const ACCEPT_VIDEO = 'video/*';
 const ACCEPT_AUDIO = 'audio/*';
@@ -420,10 +421,14 @@ export default function MasimScreening() {
         </Button>
         {analysisDone && (
           <motion.span initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} className="text-sm text-[#00ffcc]">
-            Analysis complete — review results in Assessments
+            Analysis complete — explainable report below
           </motion.span>
         )}
       </motion.div>
+
+      <AnimatePresence>
+        {analysisDone && <ExplainableAIPanel key="xai-panel" />}
+      </AnimatePresence>
 
       <AnimatePresence>
         {analyzing && (
