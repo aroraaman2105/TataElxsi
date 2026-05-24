@@ -116,8 +116,8 @@ export default function Landing() {
               Dashboard
             </Link>
             <MotionLink
-              to="/dashboard"
-              className="inline-flex items-center justify-center font-medium rounded-lg px-3 py-1.5 text-sm"
+              to="/dashboard/masim"
+              className="inline-flex items-center justify-center font-medium rounded-lg px-3 py-1.5 text-sm btn-glow"
               style={ctaStyle}
               whileHover={ctaHover}
               whileTap={{ scale: 0.98 }}
@@ -170,8 +170,8 @@ export default function Landing() {
             transition={{ delay: 0.35, duration: 0.5 }}
           >
             <MotionLink
-              to="/dashboard"
-              className="inline-flex items-center justify-center font-medium rounded-lg px-6 py-3 text-base"
+              to="/dashboard/masim"
+              className="inline-flex items-center justify-center font-medium rounded-lg px-6 py-3 text-base btn-glow shadow-glowGreen"
               style={ctaStyle}
               whileHover={ctaHover}
               whileTap={{ scale: 0.98 }}
@@ -301,8 +301,8 @@ export default function Landing() {
               Move from fragmented checks to continuous, multimodal insight—starting with one screening flow.
             </p>
             <MotionLink
-              to="/dashboard"
-              className="inline-flex items-center justify-center font-medium rounded-lg px-10 py-3 text-base"
+              to="/dashboard/masim"
+              className="inline-flex items-center justify-center font-medium rounded-lg px-10 py-3 text-base btn-glow"
               style={ctaStyle}
               whileHover={{ ...ctaHover, scale: 1.04 }}
               whileTap={{ scale: 0.97 }}

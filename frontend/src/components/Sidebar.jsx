@@ -12,55 +12,81 @@ const navItems = [
   { to: '/dashboard/settings', label: 'Settings', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen = false, onClose }) {
   return (
     <motion.aside
-      initial={{ x: -20, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="w-64 flex-shrink-0 border-r border-white/10 bg-white/5 backdrop-blur-md flex flex-col"
+      initial={false}
+      animate={{ x: mobileOpen ? 0 : undefined }}
+      className={`
+        fixed lg:static inset-y-0 left-0 z-50 w-64 flex-shrink-0
+        border-r border-white/10 bg-[#0b0f14]/90 backdrop-blur-xl flex flex-col
+        transform transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}
     >
-      <div className="p-6 border-b border-white/10">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00ffcc]/20 to-neon-blue/20 flex items-center justify-center border border-[#00ffcc]/30 shadow-glowGreen group-hover:border-[#00ffcc]/50 transition-colors">
+      <div className="p-5 sm:p-6 border-b border-white/10">
+        <Link to="/" className="flex items-center gap-3 group" onClick={onClose}>
+          <motion.div
+            className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00ffcc]/25 to-neon-blue/20 flex items-center justify-center border border-[#00ffcc]/35 shadow-glowGreen"
+            whileHover={{ scale: 1.05, rotate: 3 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <span className="text-[#00ffcc] font-bold text-lg font-mono">T</span>
-          </div>
+          </motion.div>
           <div>
-            <h1 className="font-semibold text-white text-lg tracking-tight">TELIPORT AI</h1>
-            <p className="text-xs text-slate-400">Autism Platform</p>
+            <h1 className="font-semibold text-white text-lg tracking-tight group-hover:text-glow transition-all">
+              TELIPORT AI
+            </h1>
+            <p className="text-xs text-slate-500">Autism Platform</p>
           </div>
         </Link>
       </div>
-      <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item, i) => (
+
+      <nav className="flex-1 p-3 sm:p-4 space-y-1 overflow-y-auto">
+        {navItems.map((item) => (
           <NavLink
-            key={item.to}
+            key={item.label}
             to={item.to}
             end={item.to === '/dashboard'}
+            onClick={onClose}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              `relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                 isActive
-                  ? 'bg-[#00ffcc]/10 text-[#00ffcc] border border-[#00ffcc]/20 shadow-glow'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/10 border border-transparent'
+                  ? 'bg-[#00ffcc]/12 text-[#00ffcc] border border-[#00ffcc]/25 shadow-glowGreen'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/8 border border-transparent'
               }`
             }
           >
             {({ isActive }) => (
               <>
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-[#00ffcc] shadow-[0_0_12px_#00ffcc]"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                 </svg>
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium text-sm">{item.label}</span>
               </>
             )}
           </NavLink>
         ))}
       </nav>
+
       <div className="p-4 border-t border-white/10">
-        <div className="glass-card p-3 rounded-lg border-neon-blue/20">
-          <p className="text-xs text-slate-400">AI Assistant</p>
-          <p className="text-sm text-neon-blue font-medium">Ready</p>
-        </div>
+        <motion.div
+          className="glass-card p-3 rounded-xl border border-[#00d4ff]/20"
+          whileHover={{ scale: 1.02 }}
+        >
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#00ffcc] animate-pulse shadow-[0_0_8px_#00ffcc]" />
+            <p className="text-xs text-slate-500">AI Assistant</p>
+          </div>
+          <p className="text-sm text-neon-blue font-medium mt-1">Ready for demo</p>
+        </motion.div>
       </div>
     </motion.aside>
   );

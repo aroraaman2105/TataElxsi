@@ -2,29 +2,31 @@ import { motion } from 'framer-motion';
 
 const variants = {
   primary: {
-    background: 'rgba(0, 255, 204, 0.15)',
-    border: '1px solid rgba(0, 255, 204, 0.35)',
+    background: 'linear-gradient(135deg, rgba(0, 255, 204, 0.2) 0%, rgba(0, 212, 255, 0.12) 100%)',
+    border: '1px solid rgba(0, 255, 204, 0.4)',
     color: '#00ffcc',
-    boxShadow: '0 0 16px rgba(0, 255, 204, 0.15)',
+    boxShadow: '0 0 20px rgba(0, 255, 204, 0.12), inset 0 1px 0 rgba(255,255,255,0.1)',
   },
   primaryHover: {
-    background: 'rgba(0, 255, 204, 0.25)',
-    border: '1px solid rgba(0, 255, 204, 0.5)',
-    boxShadow: '0 0 24px rgba(0, 255, 204, 0.25), 0 0 48px rgba(0, 255, 204, 0.1)',
-    scale: 1.02,
-    transition: { duration: 0.2 },
+    background: 'linear-gradient(135deg, rgba(0, 255, 204, 0.3) 0%, rgba(0, 212, 255, 0.18) 100%)',
+    border: '1px solid rgba(0, 255, 204, 0.55)',
+    boxShadow: '0 0 28px rgba(0, 255, 204, 0.35), 0 0 56px rgba(0, 255, 204, 0.1)',
+    scale: 1.03,
+    y: -1,
+    transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] },
   },
-  primaryTap: { scale: 0.98 },
+  primaryTap: { scale: 0.97, y: 0 },
   secondary: {
     background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
     color: '#e2e8f0',
-    boxShadow: 'none',
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)',
   },
   secondaryHover: {
-    background: 'rgba(255, 255, 255, 0.08)',
-    border: '1px solid rgba(255, 255, 255, 0.15)',
+    background: 'rgba(255, 255, 255, 0.09)',
+    border: '1px solid rgba(255, 255, 255, 0.18)',
     scale: 1.02,
+    y: -1,
     transition: { duration: 0.2 },
   },
   secondaryTap: { scale: 0.98 },
@@ -34,7 +36,8 @@ const variants = {
     color: '#00ffcc',
   },
   ghostHover: {
-    background: 'rgba(0, 255, 204, 0.08)',
+    background: 'rgba(0, 255, 204, 0.1)',
+    border: '1px solid rgba(0, 255, 204, 0.2)',
     scale: 1.02,
     transition: { duration: 0.2 },
   },
@@ -72,14 +75,24 @@ export default function Button({
       whileHover={disabled ? {} : hoverStyle}
       whileTap={disabled ? {} : tapStyle}
       className={`
-        font-medium rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]
+        relative font-medium rounded-lg outline-none overflow-hidden btn-glow
+        focus-visible:ring-2 focus-visible:ring-[#00ffcc] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]
         disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
         ${sizeClasses[size]} ${className}
       `}
       style={baseStyle}
       {...props}
     >
-      {children}
+      {isPrimary && !disabled && (
+        <motion.span
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
+          initial={{ x: '-100%' }}
+          whileHover={{ x: '100%' }}
+          transition={{ duration: 0.5 }}
+          aria-hidden
+        />
+      )}
+      <span className="relative z-10">{children}</span>
     </motion.button>
   );
 }

@@ -35,8 +35,8 @@ function DropZone({ accept, label, sublabel, icon, onFile, hasFile, fileName, ch
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
       className={`
-        relative rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200 min-h-[140px] flex flex-col items-center justify-center p-6
-        ${drag ? 'border-[#00ffcc] bg-[#00ffcc]/10 scale-[1.01]' : 'border-white/15 bg-white/[0.02] hover:border-white/25 hover:bg-white/[0.04]'}
+        relative rounded-xl border-2 border-dashed cursor-pointer transition-all duration-300 min-h-[140px] flex flex-col items-center justify-center p-6 glow-border
+        ${drag ? 'border-[#00ffcc] bg-[#00ffcc]/10 scale-[1.02] shadow-glowGreen is-active' : 'border-white/15 bg-white/[0.02] hover:border-[#00ffcc]/30 hover:bg-[#00ffcc]/[0.04] hover:shadow-glow'}
       `}
     >
       <input
