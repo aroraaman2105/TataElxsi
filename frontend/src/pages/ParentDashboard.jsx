@@ -136,6 +136,16 @@ function WeeklyGraph() {
       </div>
 
       <svg viewBox={`0 0 ${CHART.width} ${CHART.height}`} className="w-full h-auto" role="img" aria-label="Weekly improvement chart">
+        <defs>
+          <linearGradient id="weeklyGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#00ffcc" stopOpacity={0.25} />
+            <stop offset="100%" stopColor="#00ffcc" stopOpacity={0} />
+          </linearGradient>
+          <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#00ffcc" floodOpacity="0.4" />
+          </filter>
+        </defs>
+
         {[60, 70, 80].map((score) => {
           const { y } = scalePoint(0, score);
           return (
@@ -157,6 +167,7 @@ function WeeklyGraph() {
           strokeWidth={3}
           strokeLinecap="round"
           strokeLinejoin="round"
+          filter="url(#lineGlow)"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
@@ -165,15 +176,9 @@ function WeeklyGraph() {
           d={`${path} L ${scalePoint(WEEKLY_SCORES.length - 1, 50).x} ${CHART.height - CHART.pad.bottom} L ${scalePoint(0, 50).x} ${CHART.height - CHART.pad.bottom} Z`}
           fill="url(#weeklyGradient)"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.25 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.5 }}
         />
-        <defs>
-          <linearGradient id="weeklyGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#00ffcc" />
-            <stop offset="100%" stopColor="transparent" />
-          </linearGradient>
-        </defs>
         {WEEKLY_SCORES.map((w, i) => {
           const p = scalePoint(i, w.score);
           return (
@@ -271,9 +276,51 @@ function MilestoneTracker() {
   );
 }
 
+function ParentTips() {
+  return (
+    <Card className="!p-5 bg-gradient-to-br from-[#ff9ecd]/[0.04] to-transparent border-[#ff9ecd]/15">
+      <div className="flex items-start gap-4">
+        <div className="w-9 h-9 rounded-lg bg-[#ff9ecd]/10 flex items-center justify-center text-[#ff9ecd] flex-shrink-0 border border-[#ff9ecd]/20">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+        </div>
+        <div>
+          <h3 className="font-semibold text-white text-sm">Today&apos;s tip</h3>
+          <p className="text-sm text-slate-300 mt-1 leading-relaxed">
+            Use visual cards for speech activities today. Emma responds <span className="text-[#00ffcc] font-medium">40% better</span> to visual prompts than verbal ones when tired.
+          </p>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function TherapistNotes() {
+  return (
+    <Card className="!p-5 bg-gradient-to-br from-[#00ffcc]/[0.04] to-transparent border-[#00ffcc]/15">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-white text-sm">Therapist Notes</h3>
+          <span className="text-[10px] text-slate-500 font-medium">Updated yesterday</span>
+        </div>
+        <p className="text-sm text-slate-300 leading-relaxed">
+          Emma is showing great progress in turn-taking. Let&apos;s focus on two-word phrases during dinner table conversations this week.
+        </p>
+        <div className="flex items-center gap-2 pt-2 border-t border-white/5">
+          <div className="w-6 h-6 rounded-full bg-[#00ffcc]/20 flex items-center justify-center text-[#00ffcc] text-xs font-bold">
+            S
+          </div>
+          <span className="text-xs text-slate-400 font-medium">Dr. Sarah Cole, Speech Pathologist</span>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 export default function ParentDashboard() {
   return (
-    <div className="space-y-6 pb-12 max-w-5xl">
+    <div className="space-y-6 pb-12 w-full max-w-7xl mx-auto px-4 sm:px-6">
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -289,11 +336,19 @@ export default function ParentDashboard() {
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+        {/* Column 1: Daily Tracker & Milestones */}
+        <div className="space-y-6">
           <DailyTracker />
-          <WeeklyGraph />
+          <MilestoneTracker />
         </div>
 
+        {/* Column 2: Weekly Progress & Parent Tips */}
+        <div className="space-y-6">
+          <WeeklyGraph />
+          <ParentTips />
+        </div>
+
+        {/* Column 3: Alerts & Therapist Notes */}
         <div className="space-y-6">
           <div>
             <h2 className="text-lg font-semibold text-white mb-3">Updates for you</h2>
@@ -303,7 +358,7 @@ export default function ParentDashboard() {
               ))}
             </div>
           </div>
-          <MilestoneTracker />
+          <TherapistNotes />
         </div>
       </div>
     </div>
