@@ -1,14 +1,19 @@
 import { motion } from 'framer-motion';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { BrandLogo, navItems, isNavActive } from './Sidebar';
 
 export default function Navbar({ onMenuClick }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <motion.header
       initial={{ y: -12, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="h-14 sm:h-16 border-b border-white/10 bg-[#0b0f14]/70 backdrop-blur-xl flex items-center justify-between px-4 sm:px-6 flex-shrink-0 sticky top-0 z-30"
+      className="h-16 lg:h-20 border-b border-white/10 bg-[#0b0f14]/70 backdrop-blur-xl flex items-center justify-between px-4 sm:px-6 flex-shrink-0 sticky top-0 z-30"
     >
-      <div className="flex items-center gap-3 min-w-0">
+      <div className="flex items-center gap-4 min-w-0 h-full">
         <motion.button
           type="button"
           className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
@@ -20,13 +25,41 @@ export default function Navbar({ onMenuClick }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </motion.button>
-        <div className="min-w-0">
-          <h2 className="text-slate-200 font-medium text-base sm:text-lg truncate">Welcome back</h2>
-          <span className="text-xs text-slate-500 hidden sm:block">Medical AI Dashboard</span>
+        
+        <div className="flex-shrink-0 flex items-center">
+          <BrandLogo />
         </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-4">
+      {/* Horizontal tabs for desktop */}
+      <nav className="hidden lg:flex items-center gap-1 xl:gap-2 h-full mx-6">
+        {navItems.map((item) => {
+          const active = isNavActive(location.pathname, item);
+          return (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => navigate(item.to)}
+              className={`relative px-3 xl:px-4 h-full flex items-center text-sm font-medium transition-all duration-200 ${
+                active
+                  ? 'text-[#00ffcc] bg-white/5'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+              }`}
+            >
+              {item.label}
+              {active && (
+                <motion.div
+                  layoutId="activeTabGlow"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00ffcc] shadow-[0_0_8px_#00ffcc]"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
         <motion.div
           className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-white/5 border border-white/10"
           whileHover={{ borderColor: 'rgba(0,255,204,0.3)' }}

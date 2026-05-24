@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 
-function BrandLogo({ onClose }) {
+export function BrandLogo({ onClose }) {
   const navigate = useNavigate();
 
   return (
@@ -26,7 +26,7 @@ function BrandLogo({ onClose }) {
   );
 }
 
-const navItems = [
+export const navItems = [
   { to: '/dashboard', label: 'Dashboard', end: true, icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
   { to: '/dashboard/masim', label: 'MASIM Screening', icon: 'M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z' },
   { to: '/dashboard/therapy', label: 'Therapy Planning', icon: 'M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
@@ -37,7 +37,7 @@ const navItems = [
   { to: '/dashboard/settings', label: 'Settings', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
 ];
 
-function isNavActive(pathname, item) {
+export function isNavActive(pathname, item) {
   if (item.end) return pathname === item.to;
   return pathname === item.to || pathname.startsWith(`${item.to}/`);
 }
@@ -75,10 +75,11 @@ export default function Sidebar({ mobileOpen = false, onClose }) {
   return (
     <aside
       className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-64 flex-shrink-0
+        fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0
         border-r border-white/10 bg-[#0b0f14]/95 backdrop-blur-xl flex flex-col
         transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
-        ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        lg:hidden
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
       `}
     >
       <div className="p-5 sm:p-6 border-b border-white/10">
