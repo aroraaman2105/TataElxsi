@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Card } from '../components/design-system';
 
 const THERAPY_PLANS = {
@@ -127,13 +127,7 @@ function EngagementBar({ value }) {
 
 function TherapyCard({ plan, optimized }) {
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.3 }}
-    >
+    <div>
       <Card className="h-full flex flex-col">
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
@@ -181,7 +175,7 @@ function TherapyCard({ plan, optimized }) {
           {optimized && plan.adjustmentReason ? plan.adjustmentReason : plan.note}
         </p>
       </Card>
-    </motion.div>
+    </div>
   );
 }
 
@@ -225,19 +219,14 @@ export default function TherapyPlanning() {
 
   return (
     <div className="space-y-8 pb-12">
-      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+      <div>
         <h1 className="text-2xl font-semibold text-white">Therapy Planning</h1>
         <p className="text-slate-400 mt-1">
           Daily therapy schedule with adaptive AI recommendations based on child progress.
         </p>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-      >
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-white">Daily therapy plan</h2>
           <p className="text-sm text-slate-500 mt-0.5">
@@ -245,31 +234,15 @@ export default function TherapyPlanning() {
           </p>
         </div>
         <OptimizationToggle optimized={optimized} onChange={setOptimized} />
-      </motion.div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={optimized ? 'after' : 'before'}
-            className="contents"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-          >
-            {plans.map((plan) => (
-              <TherapyCard key={plan.id} plan={plan} optimized={optimized} />
-            ))}
-          </motion.div>
-        </AnimatePresence>
       </div>
 
-      <motion.div
-        layout
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-      >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {plans.map((plan) => (
+          <TherapyCard key={`${optimized}-${plan.id}`} plan={plan} optimized={optimized} />
+        ))}
+      </div>
+
+      <div>
         <Card className="!p-0 overflow-hidden">
           <div className="px-6 py-5 border-b border-white/8 bg-gradient-to-r from-[#00ffcc]/[0.06] to-transparent flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -301,54 +274,44 @@ export default function TherapyPlanning() {
             </span>
           </div>
 
-          <div className="p-6">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={optimized ? 'ai-after' : 'ai-before'}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.25 }}
-              >
-                <p className="text-sm text-slate-300 leading-relaxed mb-5">{ai.summary}</p>
+          <div className="p-6" key={optimized ? 'ai-after' : 'ai-before'}>
+            <p className="text-sm text-slate-300 leading-relaxed mb-5">{ai.summary}</p>
 
-                {ai.signals.length > 0 ? (
-                  <ul className="space-y-3" role="list">
-                    {ai.signals.map((signal) => (
-                      <li
-                        key={signal.label}
-                        className="flex items-start gap-4 rounded-lg border border-white/8 bg-white/[0.02] p-4"
-                      >
-                        <span
-                          className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
-                            signal.type === 'up'
-                              ? 'bg-[#00ffcc]/10 text-[#00ffcc]'
-                              : 'bg-amber-400/10 text-amber-300'
-                          }`}
-                        >
-                          {signal.type === 'up' ? '↑' : '↓'}
-                        </span>
-                        <div>
-                          <p className="text-sm font-medium text-white">{signal.label}</p>
-                          <p className="text-sm text-[#00ffcc] mt-0.5">{signal.change}</p>
-                          <p className="text-xs text-slate-500 mt-1">{signal.reason}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="rounded-lg border border-dashed border-white/10 p-6 text-center">
-                    <p className="text-sm text-slate-500">
-                      Switch to <span className="text-white font-medium">After AI optimization</span> to see
-                      how the plan adapts when engagement is low or improvement is detected.
-                    </p>
-                  </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
+            {ai.signals.length > 0 ? (
+              <ul className="space-y-3" role="list">
+                {ai.signals.map((signal) => (
+                  <li
+                    key={signal.label}
+                    className="flex items-start gap-4 rounded-lg border border-white/8 bg-white/[0.02] p-4"
+                  >
+                    <span
+                      className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
+                        signal.type === 'up'
+                          ? 'bg-[#00ffcc]/10 text-[#00ffcc]'
+                          : 'bg-amber-400/10 text-amber-300'
+                      }`}
+                    >
+                      {signal.type === 'up' ? '↑' : '↓'}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-white">{signal.label}</p>
+                      <p className="text-sm text-[#00ffcc] mt-0.5">{signal.change}</p>
+                      <p className="text-xs text-slate-500 mt-1">{signal.reason}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="rounded-lg border border-dashed border-white/10 p-6 text-center">
+                <p className="text-sm text-slate-500">
+                  Switch to <span className="text-white font-medium">After AI optimization</span> to see how
+                  the plan adapts when engagement is low or improvement is detected.
+                </p>
+              </div>
+            )}
           </div>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 }

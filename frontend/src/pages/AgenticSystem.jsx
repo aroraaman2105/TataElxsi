@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const CENTER = { x: 300, y: 300 };
 const ORBIT_R = 195;
@@ -344,61 +344,47 @@ export default function AgenticSystem() {
         </motion.div>
 
         <div className="space-y-4">
-          <AnimatePresence mode="wait">
-            {detail ? (
-              <motion.div
-                key={selected}
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -8 }}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5"
+          {detail ? (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5">
+              <p className="text-[10px] uppercase tracking-wider text-[#00ffcc] mb-2">Active agent</p>
+              <h2 className="text-lg font-semibold text-white">{detail.title}</h2>
+              <p className="text-sm text-slate-400 mt-2 leading-relaxed">{detail.desc}</p>
+              <p className="text-xs text-slate-500 mt-4 mb-2 font-medium">Outputs to data lake</p>
+              <ul className="space-y-2">
+                {detail.outputs.map((o) => (
+                  <li key={o} className="flex items-center gap-2 text-sm text-slate-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00ffcc]" />
+                    {o}
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={() => setSelected(null)}
+                className="mt-5 text-xs text-slate-500 hover:text-[#00ffcc] transition-colors"
               >
-                <p className="text-[10px] uppercase tracking-wider text-[#00ffcc] mb-2">Active agent</p>
-                <h2 className="text-lg font-semibold text-white">{detail.title}</h2>
-                <p className="text-sm text-slate-400 mt-2 leading-relaxed">{detail.desc}</p>
-                <p className="text-xs text-slate-500 mt-4 mb-2 font-medium">Outputs to data lake</p>
-                <ul className="space-y-2">
-                  {detail.outputs.map((o) => (
-                    <li key={o} className="flex items-center gap-2 text-sm text-slate-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00ffcc]" />
-                      {o}
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  type="button"
-                  onClick={() => setSelected(null)}
-                  className="mt-5 text-xs text-slate-500 hover:text-[#00ffcc] transition-colors"
-                >
-                  ← Show all agents
-                </button>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="default"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5"
-              >
-                <h2 className="text-lg font-semibold text-white">How it works</h2>
-                <ul className="mt-4 space-y-3 text-sm text-slate-400">
-                  <li className="flex gap-2">
-                    <span className="text-[#00ffcc]">①</span>
-                    All agents read and write to the central Patient Data Lake.
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-[#00d4ff]">②</span>
-                    Data packets flow in real time (animated paths).
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-[#a78bfa]">③</span>
-                    Click any agent to isolate its connections.
-                  </li>
-                </ul>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                ← Show all agents
+              </button>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5">
+              <h2 className="text-lg font-semibold text-white">How it works</h2>
+              <ul className="mt-4 space-y-3 text-sm text-slate-400">
+                <li className="flex gap-2">
+                  <span className="text-[#00ffcc]">①</span>
+                  All agents read and write to the central Patient Data Lake.
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-[#00d4ff]">②</span>
+                  Data packets flow in real time (animated paths).
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-[#a78bfa]">③</span>
+                  Click any agent to isolate its connections.
+                </li>
+              </ul>
+            </div>
+          )}
 
           <div className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
             <p className="text-xs text-slate-500 mb-3 font-medium uppercase tracking-wider">Agent status</p>
