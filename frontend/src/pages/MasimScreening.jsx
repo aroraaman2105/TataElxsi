@@ -315,7 +315,7 @@ export default function MasimScreening() {
 
   return (
     <div className="space-y-8 pb-12">
-      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+      <motion.div initial={false} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-semibold text-white">MASIM Screening</h1>
         <p className="text-slate-400 mt-1">
           Multimodal input: video, EEG signal, and audio. Upload signals, then run unified analysis.

@@ -12,13 +12,14 @@ export default function Card({
   padding = true,
   glow = false,
   delay = 0,
+  animateEntrance = false,
   ...props
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={animateEntrance ? { opacity: 0, y: 12 } : false}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: animateEntrance ? 0.35 : 0.15, delay: animateEntrance ? delay : 0, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{
         y: -3,
         borderColor: 'rgba(0, 255, 204, 0.22)',

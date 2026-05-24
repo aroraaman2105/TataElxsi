@@ -27,18 +27,14 @@ const accentBg = { green: 'rgba(0, 255, 204, 0.1)', blue: 'rgba(0, 212, 255, 0.1
 export default function Dashboard() {
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
+      <motion.div initial={false} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
         <p className="text-slate-400 mt-1">Overview of your TELIPORT AI platform metrics</p>
       </motion.div>
 
       <motion.div
         variants={container}
-        initial="hidden"
+        initial={false}
         animate="show"
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
       >
@@ -68,9 +64,8 @@ export default function Dashboard() {
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.3 }}
         className="grid grid-cols-1 lg:grid-cols-2 gap-6"
       >
         <Card>
@@ -97,9 +92,8 @@ export default function Dashboard() {
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
         className="grid grid-cols-1 lg:grid-cols-2 gap-6"
       >
         <Card>
