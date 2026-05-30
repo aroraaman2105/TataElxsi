@@ -1,67 +1,79 @@
 import { motion } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Settings() {
+  const { theme } = useTheme();
+
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <h1 className="text-2xl font-semibold text-white">Settings</h1>
-        <p className="text-slate-400 mt-1">Configure your TELIPORT AI platform</p>
+      <motion.div initial={false} animate={{ opacity: 1, y: 0 }}>
+        <h1 className="text-2xl font-semibold text-[var(--app-text-primary)]">Settings</h1>
+        <p className="text-[var(--app-text-muted)] mt-1">Configure your TELIPORT AI platform</p>
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
         className="space-y-6 max-w-2xl"
       >
-        <div className="glass-card p-6 rounded-xl border-dark-border/50">
-          <h3 className="font-semibold text-white mb-4">Profile</h3>
+        <div className="glass-card p-6 rounded-xl">
+          <h3 className="font-semibold text-[var(--app-text-primary)] mb-1">Appearance</h3>
+          <p className="text-sm text-[var(--app-text-muted)] mb-5">
+            Choose light or dark theme. Your choice is saved and applied across the app.
+          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <ThemeToggle />
+            <p className="text-xs text-[var(--app-text-muted)]">
+              Current: <span className="text-[#00ffcc] font-medium capitalize">{theme}</span> mode
+            </p>
+          </div>
+        </div>
+
+        <div className="glass-card p-6 rounded-xl">
+          <h3 className="font-semibold text-[var(--app-text-primary)] mb-4">Profile</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Display name</label>
+              <label className="block text-sm text-[var(--app-text-muted)] mb-1">Display name</label>
               <input
                 type="text"
                 defaultValue="Clinician"
-                className="w-full px-4 py-2 rounded-lg bg-dark-bg/80 border border-dark-border text-slate-200 focus:outline-none focus:border-neon-green/50"
+                className="theme-input w-full px-4 py-2 rounded-lg"
               />
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Email</label>
+              <label className="block text-sm text-[var(--app-text-muted)] mb-1">Email</label>
               <input
                 type="email"
                 defaultValue="user@teliport.ai"
-                className="w-full px-4 py-2 rounded-lg bg-dark-bg/80 border border-dark-border text-slate-200 focus:outline-none focus:border-neon-green/50"
+                className="theme-input w-full px-4 py-2 rounded-lg"
               />
             </div>
           </div>
         </div>
 
-        <div className="glass-card p-6 rounded-xl border-dark-border/50">
-          <h3 className="font-semibold text-white mb-4">Notifications</h3>
+        <div className="glass-card p-6 rounded-xl">
+          <h3 className="font-semibold text-[var(--app-text-primary)] mb-4">Notifications</h3>
           <div className="flex items-center justify-between py-2">
-            <span className="text-slate-300">Email notifications</span>
+            <span className="text-[var(--app-text-secondary)]">Email notifications</span>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" defaultChecked className="sr-only peer" />
-              <div className="w-11 h-6 bg-dark-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-green/50" />
+              <div className="theme-toggle-track w-11 h-6 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all" />
             </label>
           </div>
-          <div className="flex items-center justify-between py-2 border-t border-dark-border/30">
-            <span className="text-slate-300">Session reminders</span>
+          <div className="flex items-center justify-between py-2 border-t border-[var(--app-border)]">
+            <span className="text-[var(--app-text-secondary)]">Session reminders</span>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" defaultChecked className="sr-only peer" />
-              <div className="w-11 h-6 bg-dark-border rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-green/50" />
+              <div className="theme-toggle-track w-11 h-6 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all" />
             </label>
           </div>
         </div>
 
-        <div className="glass-card p-6 rounded-xl border-dark-border/50">
-          <h3 className="font-semibold text-white mb-4">API & Integrations</h3>
-          <p className="text-slate-400 text-sm mb-4">Connect external tools and access API keys.</p>
-          <button className="px-4 py-2 rounded-lg border border-dark-border text-slate-300 hover:border-neon-blue/50 hover:text-neon-blue transition-colors text-sm font-medium">
+        <div className="glass-card p-6 rounded-xl">
+          <h3 className="font-semibold text-[var(--app-text-primary)] mb-4">API & Integrations</h3>
+          <p className="text-[var(--app-text-muted)] text-sm mb-4">Connect external tools and access API keys.</p>
+          <button type="button" className="theme-btn-secondary px-4 py-2 rounded-lg text-sm font-medium">
             Manage API keys
           </button>
         </div>

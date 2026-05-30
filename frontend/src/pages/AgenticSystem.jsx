@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
 
 const CENTER = { x: 300, y: 300 };
 const ORBIT_R = 195;
@@ -39,6 +40,43 @@ const AGENTS = [
   },
 ];
 
+const DIAGRAM_THEME = {
+  dark: {
+    centerFill: 'rgba(11,15,20,0.9)',
+    centerText: '#ffffff',
+    centerSubtext: '#64748b',
+    orbitOuter: 'rgba(255,255,255,0.08)',
+    orbitInner: 'rgba(0,255,204,0.12)',
+    crossStroke: 'rgba(255,255,255,0.35)',
+    lakeGlow: [
+      { offset: '0%', color: '#00ffcc', opacity: 0.35 },
+      { offset: '70%', color: '#00d4ff', opacity: 0.08 },
+      { offset: '100%', color: 'transparent', opacity: 0 },
+    ],
+    agentNodeBg: (color) => `linear-gradient(135deg, ${color}22, rgba(11,15,20,0.92))`,
+    agentShadow: (color, selected) =>
+      selected ? `0 0 32px ${color}55, inset 0 0 20px ${color}18` : `0 0 16px ${color}28`,
+  },
+  light: {
+    centerFill: '#ffffff',
+    centerText: '#0f172a',
+    centerSubtext: '#64748b',
+    orbitOuter: 'rgba(15,23,42,0.14)',
+    orbitInner: 'rgba(0,255,204,0.35)',
+    crossStroke: 'rgba(100,116,139,0.5)',
+    lakeGlow: [
+      { offset: '0%', color: '#00ffcc', opacity: 0.2 },
+      { offset: '60%', color: '#00d4ff', opacity: 0.1 },
+      { offset: '100%', color: '#f1f5f9', opacity: 0.4 },
+    ],
+    agentNodeBg: (color) => `linear-gradient(135deg, ${color}18, #ffffff)`,
+    agentShadow: (color, selected) =>
+      selected
+        ? `0 8px 28px ${color}40, 0 0 0 2px ${color}55, inset 0 1px 0 rgba(255,255,255,0.9)`
+        : `0 4px 16px rgba(15,23,42,0.08), 0 0 0 1px ${color}35`,
+  },
+};
+
 function polar(angleDeg, radius = ORBIT_R) {
   const rad = (angleDeg * Math.PI) / 180;
   return {
@@ -77,7 +115,7 @@ function DataParticles({ from, to, color, active, reverse = false }) {
   );
 }
 
-function AgentNode({ agent, position, selected, onSelect }) {
+function AgentNode({ agent, position, selected, onSelect, diagramStyle }) {
   const isActive = selected === null || selected === agent.id;
 
   return (
@@ -95,18 +133,15 @@ function AgentNode({ agent, position, selected, onSelect }) {
       animate={{ opacity: isActive ? 1 : 0.45, scale: isActive ? 1 : 0.92 }}
     >
       <motion.div
-        className="relative w-[88px] h-[88px] rounded-2xl flex items-center justify-center border backdrop-blur-md cursor-pointer"
+        className="relative w-[88px] h-[88px] rounded-2xl flex items-center justify-center border-2 backdrop-blur-md cursor-pointer"
         style={{
-          background: `linear-gradient(135deg, ${agent.color}18, rgba(11,15,20,0.9))`,
-          borderColor: selected === agent.id ? agent.color : `${agent.color}44`,
-          boxShadow:
-            selected === agent.id
-              ? `0 0 32px ${agent.color}55, inset 0 0 20px ${agent.color}15`
-              : `0 0 16px ${agent.color}22`,
+          background: diagramStyle.agentNodeBg(agent.color),
+          borderColor: selected === agent.id ? agent.color : `${agent.color}55`,
+          boxShadow: diagramStyle.agentShadow(agent.color, selected === agent.id),
         }}
         animate={
           selected === agent.id
-            ? { boxShadow: [`0 0 24px ${agent.color}44`, `0 0 40px ${agent.color}66`, `0 0 24px ${agent.color}44`] }
+            ? { boxShadow: [`0 0 20px ${agent.color}44`, `0 0 36px ${agent.color}55`, `0 0 20px ${agent.color}44`] }
             : {}
         }
         transition={{ duration: 2, repeat: Infinity }}
@@ -125,14 +160,27 @@ function AgentNode({ agent, position, selected, onSelect }) {
         )}
       </motion.div>
       <div className="text-center max-w-[120px]">
-        <p className="text-xs font-semibold text-white leading-tight">{agent.label}</p>
-        <p className="text-[10px] text-slate-500 mt-0.5 hidden sm:block">{agent.role}</p>
+        <p
+          className="text-xs font-semibold leading-tight"
+          style={{ color: diagramStyle.centerText }}
+        >
+          {agent.label}
+        </p>
+        <p
+          className="text-[10px] mt-0.5 hidden sm:block"
+          style={{ color: diagramStyle.centerSubtext }}
+        >
+          {agent.role}
+        </p>
       </div>
     </motion.button>
   );
 }
 
-function SystemDiagram({ selected, onSelect }) {
+function SystemDiagram({ selected, onSelect, isLight }) {
+  const diagramStyle = DIAGRAM_THEME[isLight ? 'light' : 'dark'];
+  const gradientId = isLight ? 'lakeGlowLight' : 'lakeGlowDark';
+
   const positions = useMemo(
     () => AGENTS.map((a) => ({ ...a, pos: polar(a.angle) })),
     []
@@ -147,10 +195,15 @@ function SystemDiagram({ selected, onSelect }) {
         aria-label="Agentic AI system with Patient Data Lake at center and four agents around it"
       >
         <defs>
-          <radialGradient id="lakeGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#00ffcc" stopOpacity="0.35" />
-            <stop offset="70%" stopColor="#00d4ff" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="transparent" />
+          <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
+            {diagramStyle.lakeGlow.map((stop) => (
+              <stop
+                key={stop.offset}
+                offset={stop.offset}
+                stopColor={stop.color}
+                stopOpacity={stop.opacity}
+              />
+            ))}
           </radialGradient>
           <filter id="glow">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -161,13 +214,12 @@ function SystemDiagram({ selected, onSelect }) {
           </filter>
         </defs>
 
-        {/* Orbital rings */}
         <motion.circle
           cx={CENTER.x}
           cy={CENTER.y}
           r={ORBIT_R}
           fill="none"
-          stroke="rgba(255,255,255,0.06)"
+          stroke={diagramStyle.orbitOuter}
           strokeWidth={1}
           strokeDasharray="6 8"
           animate={{ rotate: 360 }}
@@ -179,14 +231,13 @@ function SystemDiagram({ selected, onSelect }) {
           cy={CENTER.y}
           r={ORBIT_R + 28}
           fill="none"
-          stroke="rgba(0,255,204,0.08)"
+          stroke={diagramStyle.orbitInner}
           strokeWidth={1}
           animate={{ rotate: -360 }}
           transition={{ duration: 90, repeat: Infinity, ease: 'linear' }}
           style={{ transformOrigin: `${CENTER.x}px ${CENTER.y}px` }}
         />
 
-        {/* Connection lines */}
         {positions.map(({ id, pos, color }) => {
           const active = selected === null || selected === id;
           return (
@@ -198,7 +249,7 @@ function SystemDiagram({ selected, onSelect }) {
                 y2={pos.y}
                 stroke={color}
                 strokeWidth={active ? 1.5 : 0.5}
-                strokeOpacity={active ? 0.35 : 0.12}
+                strokeOpacity={active ? (isLight ? 0.55 : 0.35) : isLight ? 0.2 : 0.12}
                 strokeDasharray="4 6"
               />
               <DataParticles from={pos} to={CENTER} color={color} active={active} />
@@ -207,9 +258,8 @@ function SystemDiagram({ selected, onSelect }) {
           );
         })}
 
-        {/* Cross-agent flows (subtle) */}
         {selected && (
-          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 0.2 }}>
+          <motion.g initial={{ opacity: 0 }} animate={{ opacity: isLight ? 0.35 : 0.2 }}>
             {positions
               .filter((a) => a.id !== selected)
               .map((a) => {
@@ -222,7 +272,7 @@ function SystemDiagram({ selected, onSelect }) {
                     y1={src.y}
                     x2={a.pos.x}
                     y2={a.pos.y}
-                    stroke="#ffffff"
+                    stroke={diagramStyle.crossStroke}
                     strokeWidth={0.5}
                     strokeDasharray="2 6"
                   />
@@ -231,16 +281,15 @@ function SystemDiagram({ selected, onSelect }) {
           </motion.g>
         )}
 
-        {/* Center — Patient Data Lake */}
-        <circle cx={CENTER.x} cy={CENTER.y} r={72} fill="url(#lakeGlow)" />
+        <circle cx={CENTER.x} cy={CENTER.y} r={72} fill={`url(#${gradientId})`} />
         <motion.circle
           cx={CENTER.x}
           cy={CENTER.y}
           r={58}
-          fill="rgba(11,15,20,0.85)"
+          fill={diagramStyle.centerFill}
           stroke="#00ffcc"
           strokeWidth={2}
-          filter="url(#glow)"
+          filter={isLight ? undefined : 'url(#glow)'}
           animate={{ strokeOpacity: [0.5, 1, 0.5] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -251,17 +300,37 @@ function SystemDiagram({ selected, onSelect }) {
           fill="none"
           stroke="#00ffcc"
           strokeWidth={1}
-          strokeOpacity={0.3}
-          animate={{ r: [66, 74, 66], strokeOpacity: [0.2, 0.5, 0.2] }}
+          strokeOpacity={isLight ? 0.45 : 0.3}
+          animate={{ r: [66, 74, 66], strokeOpacity: isLight ? [0.25, 0.55, 0.25] : [0.2, 0.5, 0.2] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
         />
-        <text x={CENTER.x} y={CENTER.y - 8} textAnchor="middle" className="fill-white text-[13px] font-semibold">
+        <text
+          x={CENTER.x}
+          y={CENTER.y - 8}
+          textAnchor="middle"
+          fill={diagramStyle.centerText}
+          fontSize="13"
+          fontWeight="600"
+        >
           Patient
         </text>
-        <text x={CENTER.x} y={CENTER.y + 10} textAnchor="middle" className="fill-[#00ffcc] text-[13px] font-semibold">
+        <text
+          x={CENTER.x}
+          y={CENTER.y + 10}
+          textAnchor="middle"
+          fill="#00cc9f"
+          fontSize="13"
+          fontWeight="600"
+        >
           Data Lake
         </text>
-        <text x={CENTER.x} y={CENTER.y + 28} textAnchor="middle" className="fill-slate-500 text-[9px]">
+        <text
+          x={CENTER.x}
+          y={CENTER.y + 28}
+          textAnchor="middle"
+          fill={diagramStyle.centerSubtext}
+          fontSize="9"
+        >
           Unified records
         </text>
       </svg>
@@ -273,6 +342,7 @@ function SystemDiagram({ selected, onSelect }) {
           position={agent.pos}
           selected={selected}
           onSelect={onSelect}
+          diagramStyle={diagramStyle}
         />
       ))}
     </div>
@@ -304,16 +374,17 @@ const AGENT_DETAILS = {
 
 export default function AgenticSystem() {
   const [selected, setSelected] = useState(null);
+  const { isLight } = useTheme();
   const detail = selected ? AGENT_DETAILS[selected] : null;
 
   return (
     <div className="space-y-8 pb-12">
-      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+      <motion.div initial={false} animate={{ opacity: 1, y: 0 }}>
         <p className="text-[10px] uppercase tracking-[0.25em] text-[#00ffcc] font-semibold mb-2">
           Multi-agent orchestration
         </p>
-        <h1 className="text-2xl font-semibold text-white">Agentic AI System</h1>
-        <p className="text-slate-400 mt-1 max-w-2xl">
+        <h1 className="text-2xl font-semibold text-[var(--app-text-primary)]">Agentic AI System</h1>
+        <p className="text-[var(--app-text-muted)] mt-1 max-w-2xl">
           Specialized agents collaborate through a shared patient data lake. Click an agent to focus the
           data flows and view its role.
         </p>
@@ -321,38 +392,27 @@ export default function AgenticSystem() {
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-8 items-start">
         <motion.div
-          className="rounded-2xl border border-white/10 bg-[#0b0f14]/80 backdrop-blur-xl p-6 sm:p-8 relative overflow-hidden"
-          initial={{ opacity: 0, scale: 0.98 }}
+          className="agentic-diagram-panel rounded-2xl border backdrop-blur-xl p-6 sm:p-8 relative overflow-hidden transition-colors duration-300"
+          initial={false}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
         >
-          <div
-            className="absolute inset-0 opacity-30 pointer-events-none"
-            style={{
-              backgroundImage: `
-                radial-gradient(circle at 50% 50%, rgba(0,255,204,0.08) 0%, transparent 55%),
-                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
-              `,
-              backgroundSize: '100% 100%, 32px 32px, 32px 32px',
-            }}
-          />
-          <SystemDiagram selected={selected} onSelect={setSelected} />
-          <p className="text-center text-xs text-slate-600 mt-4 relative z-10">
+          <div className="agentic-diagram-grid absolute inset-0 opacity-80 pointer-events-none" />
+          <SystemDiagram selected={selected} onSelect={setSelected} isLight={isLight} />
+          <p className="text-center text-xs text-[var(--app-text-muted)] mt-4 relative z-10">
             Live simulation · bidirectional sync with Patient Data Lake
           </p>
         </motion.div>
 
         <div className="space-y-4">
           {detail ? (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5">
+            <div className="glass-card rounded-2xl p-5">
               <p className="text-[10px] uppercase tracking-wider text-[#00ffcc] mb-2">Active agent</p>
-              <h2 className="text-lg font-semibold text-white">{detail.title}</h2>
-              <p className="text-sm text-slate-400 mt-2 leading-relaxed">{detail.desc}</p>
-              <p className="text-xs text-slate-500 mt-4 mb-2 font-medium">Outputs to data lake</p>
+              <h2 className="text-lg font-semibold text-[var(--app-text-primary)]">{detail.title}</h2>
+              <p className="text-sm text-[var(--app-text-muted)] mt-2 leading-relaxed">{detail.desc}</p>
+              <p className="text-xs text-[var(--app-text-muted)] mt-4 mb-2 font-medium">Outputs to data lake</p>
               <ul className="space-y-2">
                 {detail.outputs.map((o) => (
-                  <li key={o} className="flex items-center gap-2 text-sm text-slate-300">
+                  <li key={o} className="flex items-center gap-2 text-sm text-[var(--app-text-secondary)]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#00ffcc]" />
                     {o}
                   </li>
@@ -361,15 +421,15 @@ export default function AgenticSystem() {
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="mt-5 text-xs text-slate-500 hover:text-[#00ffcc] transition-colors"
+                className="mt-5 text-xs text-[var(--app-text-muted)] hover:text-[#00ffcc] transition-colors"
               >
                 ← Show all agents
               </button>
             </div>
           ) : (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md p-5">
-              <h2 className="text-lg font-semibold text-white">How it works</h2>
-              <ul className="mt-4 space-y-3 text-sm text-slate-400">
+            <div className="glass-card rounded-2xl p-5">
+              <h2 className="text-lg font-semibold text-[var(--app-text-primary)]">How it works</h2>
+              <ul className="mt-4 space-y-3 text-sm text-[var(--app-text-muted)]">
                 <li className="flex gap-2">
                   <span className="text-[#00ffcc]">①</span>
                   All agents read and write to the central Patient Data Lake.
@@ -386,12 +446,14 @@ export default function AgenticSystem() {
             </div>
           )}
 
-          <div className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
-            <p className="text-xs text-slate-500 mb-3 font-medium uppercase tracking-wider">Agent status</p>
+          <div className="glass-card rounded-xl p-4">
+            <p className="text-xs text-[var(--app-text-muted)] mb-3 font-medium uppercase tracking-wider">
+              Agent status
+            </p>
             <ul className="space-y-2">
               {AGENTS.map((a) => (
                 <li key={a.id} className="flex items-center justify-between text-sm">
-                  <span className="text-slate-400">{a.label}</span>
+                  <span className="text-[var(--app-text-secondary)]">{a.label}</span>
                   <span className="flex items-center gap-1.5 text-[#00ffcc] text-xs">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#00ffcc] animate-pulse" />
                     Active

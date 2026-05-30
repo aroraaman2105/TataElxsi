@@ -11,7 +11,7 @@ export default function Navbar({ onMenuClick }) {
       initial={{ y: -12, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="h-16 lg:h-20 border-b border-white/10 bg-[#0b0f14]/70 backdrop-blur-xl flex items-center justify-between px-4 sm:px-6 flex-shrink-0 sticky top-0 z-30"
+      className="h-16 lg:h-20 border-b border-[var(--app-border)] bg-[var(--app-nav-bg)] backdrop-blur-xl flex items-center justify-between px-4 sm:px-6 flex-shrink-0 sticky top-0 z-30 transition-colors duration-300"
     >
       <div className="flex items-center gap-4 min-w-0 h-full">
         <motion.button

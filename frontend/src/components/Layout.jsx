@@ -8,7 +8,7 @@ export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-dark-bg flex flex-col relative">
+    <div className="min-h-screen app-shell flex flex-col relative transition-colors duration-300">
       <AmbientBackground />
 
       <Navbar onMenuClick={() => setSidebarOpen(true)} />

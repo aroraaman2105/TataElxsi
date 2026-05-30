@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 
 const glassStyle = {
-  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)',
-  border: '1px solid rgba(255, 255, 255, 0.08)',
-  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
+  background: 'var(--app-glass-bg)',
+  border: '1px solid var(--app-glass-border)',
+  boxShadow: 'var(--app-glass-shadow)',
 };
 
 export default function Card({

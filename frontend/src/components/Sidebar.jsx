@@ -76,7 +76,7 @@ export default function Sidebar({ mobileOpen = false, onClose }) {
     <aside
       className={`
         fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0
-        border-r border-white/10 bg-[#0b0f14]/95 backdrop-blur-xl flex flex-col
+        border-r border-[var(--app-border)] bg-[var(--app-nav-bg)] backdrop-blur-xl flex flex-col
         transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
         lg:hidden
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
