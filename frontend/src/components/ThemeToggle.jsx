@@ -44,7 +44,7 @@ export default function ThemeToggle({ className = '' }) {
             onClick={() => setTheme(opt.id)}
             className={`relative flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 ${
               active
-                ? 'text-[#00ffcc]'
+                ? 'text-[var(--accent-primary)]'
                 : 'text-[var(--app-text-muted)] hover:text-[var(--app-text-secondary)]'
             }`}
             aria-pressed={active}
@@ -53,7 +53,7 @@ export default function ThemeToggle({ className = '' }) {
             {active && (
               <motion.span
                 layoutId="theme-pill"
-                className="absolute inset-0 rounded-lg bg-[#00ffcc]/15 border border-[#00ffcc]/30 shadow-[0_0_12px_rgba(0,255,204,0.15)]"
+                className="absolute inset-0 rounded-lg bg-[var(--accent-primary-muted)] border border-[color-mix(in_srgb,var(--accent-primary)_35%,var(--app-border))]"
                 transition={{ type: 'spring', stiffness: 400, damping: 32 }}
               />
             )}

@@ -40,17 +40,15 @@ export default function Navbar({ onMenuClick }) {
               key={item.label}
               type="button"
               onClick={() => navigate(item.to)}
-              className={`relative px-3 xl:px-4 h-full flex items-center text-sm font-medium transition-all duration-200 ${
-                active
-                  ? 'text-[#00ffcc] bg-white/5'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+              className={`relative px-3 xl:px-4 h-full flex items-center text-sm font-medium rounded-lg ${
+                active ? 'nav-tab-active' : 'nav-tab'
               }`}
             >
               {item.label}
               {active && (
                 <motion.div
                   layoutId="activeTabGlow"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00ffcc] shadow-[0_0_8px_#00ffcc]"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 nav-tab-indicator"
                   transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                 />
               )}
@@ -61,10 +59,9 @@ export default function Navbar({ onMenuClick }) {
 
       <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
         <motion.div
-          className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-white/5 border border-white/10"
-          whileHover={{ borderColor: 'rgba(0,255,204,0.3)' }}
+          className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[var(--app-surface-muted)] border border-[var(--app-border)]"
         >
-          <span className="w-2 h-2 rounded-full bg-[#00ffcc] animate-pulse shadow-[0_0_8px_#00ffcc]" />
+          <span className="w-2 h-2 rounded-full status-live-dot animate-pulse" />
           <span className="text-xs text-slate-400 hidden xs:inline">Live</span>
         </motion.div>
         <motion.button

@@ -25,7 +25,7 @@ export default function Settings() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <ThemeToggle />
             <p className="text-xs text-[var(--app-text-muted)]">
-              Current: <span className="text-[#00ffcc] font-medium capitalize">{theme}</span> mode
+              Current: <span className="text-[var(--accent-primary)] font-medium capitalize">{theme}</span> mode
             </p>
           </div>
         </div>

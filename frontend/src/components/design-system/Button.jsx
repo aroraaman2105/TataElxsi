@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { useTheme } from '../../context/ThemeContext';
 
-const variants = {
+const darkVariants = {
   primary: {
     background: 'linear-gradient(135deg, rgba(0, 255, 204, 0.2) 0%, rgba(0, 212, 255, 0.12) 100%)',
     border: '1px solid rgba(0, 255, 204, 0.4)',
@@ -44,6 +45,50 @@ const variants = {
   ghostTap: { scale: 0.98 },
 };
 
+const lightVariants = {
+  primary: {
+    background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+    border: '1px solid #1d4ed8',
+    color: '#ffffff',
+    boxShadow: '0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 14px rgba(37, 99, 235, 0.28)',
+  },
+  primaryHover: {
+    background: 'linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%)',
+    border: '1px solid #1e40af',
+    boxShadow: '0 6px 20px rgba(37, 99, 235, 0.35)',
+    scale: 1.02,
+    y: -1,
+    transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] },
+  },
+  primaryTap: { scale: 0.98, y: 0 },
+  secondary: {
+    background: '#f1f5f9',
+    border: '1px solid #e5e7eb',
+    color: '#374151',
+    boxShadow: 'none',
+  },
+  secondaryHover: {
+    background: '#eef2f6',
+    border: '1px solid #d1d5db',
+    scale: 1.01,
+    y: 0,
+    transition: { duration: 0.2 },
+  },
+  secondaryTap: { scale: 0.99 },
+  ghost: {
+    background: 'transparent',
+    border: '1px solid transparent',
+    color: '#2563eb',
+  },
+  ghostHover: {
+    background: '#dbeafe',
+    border: '1px solid #bfdbfe',
+    scale: 1.01,
+    transition: { duration: 0.2 },
+  },
+  ghostTap: { scale: 0.99 },
+};
+
 export default function Button({
   children,
   variant = 'primary',
@@ -53,6 +98,8 @@ export default function Button({
   type = 'button',
   ...props
 }) {
+  const { theme } = useTheme();
+  const variants = theme === 'light' ? lightVariants : darkVariants;
   const isPrimary = variant === 'primary';
   const isSecondary = variant === 'secondary';
   const isGhost = variant === 'ghost';

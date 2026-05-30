@@ -54,14 +54,14 @@ function SidebarNavItem({ item, onClose }) {
         onClose?.();
         navigate(item.to);
       }}
-      className={`relative w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-150 text-left ${
+      className={`relative w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-150 text-left border ${
         active
-          ? 'bg-[#00ffcc]/12 text-[#00ffcc] border border-[#00ffcc]/25 shadow-glowGreen'
-          : 'text-slate-400 hover:text-slate-200 hover:bg-white/8 border border-transparent'
+          ? 'sidebar-nav-active'
+          : 'text-slate-400 hover:text-slate-200 hover:bg-white/8 border-transparent'
       }`}
     >
       {active && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-[#00ffcc] shadow-[0_0_12px_#00ffcc]" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-[var(--accent-primary)]" />
       )}
       <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
@@ -95,7 +95,7 @@ export default function Sidebar({ mobileOpen = false, onClose }) {
       <div className="p-4 border-t border-white/10">
         <div className="glass-card p-3 rounded-xl border border-[#00d4ff]/20">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#00ffcc] animate-pulse shadow-[0_0_8px_#00ffcc]" />
+            <span className="w-2 h-2 rounded-full status-live-dot animate-pulse" />
             <p className="text-xs text-slate-500">AI Assistant</p>
           </div>
           <p className="text-sm text-neon-blue font-medium mt-1">Ready for demo</p>

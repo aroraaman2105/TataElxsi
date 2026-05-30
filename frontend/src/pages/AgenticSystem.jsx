@@ -59,15 +59,15 @@ const DIAGRAM_THEME = {
   },
   light: {
     centerFill: '#ffffff',
-    centerText: '#0f172a',
+    centerText: '#111827',
     centerSubtext: '#64748b',
-    orbitOuter: 'rgba(15,23,42,0.14)',
-    orbitInner: 'rgba(0,255,204,0.35)',
-    crossStroke: 'rgba(100,116,139,0.5)',
+    orbitOuter: 'rgba(15,23,42,0.1)',
+    orbitInner: 'rgba(37,99,235,0.2)',
+    crossStroke: 'rgba(100,116,139,0.45)',
     lakeGlow: [
-      { offset: '0%', color: '#00ffcc', opacity: 0.2 },
-      { offset: '60%', color: '#00d4ff', opacity: 0.1 },
-      { offset: '100%', color: '#f1f5f9', opacity: 0.4 },
+      { offset: '0%', color: '#2563eb', opacity: 0.16 },
+      { offset: '60%', color: '#4f46e5', opacity: 0.08 },
+      { offset: '100%', color: '#eef2f6', opacity: 0.5 },
     ],
     agentNodeBg: (color) => `linear-gradient(135deg, ${color}18, #ffffff)`,
     agentShadow: (color, selected) =>
