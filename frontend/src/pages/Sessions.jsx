@@ -22,12 +22,15 @@ function StatusPill({ status }) {
   );
 }
 
-export default function Sessions() {
+export default function Sessions({
+  title = 'Sessions',
+  subtitle = 'View and manage therapy and screening sessions',
+}) {
   return (
     <div className="space-y-8">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <h1 className="text-2xl font-semibold text-[var(--app-text-primary)]">Sessions</h1>
-        <p className="text-[var(--app-text-muted)] mt-1">View and manage therapy and screening sessions</p>
+        <h1 className="text-2xl font-semibold text-[var(--app-text-primary)]">{title}</h1>
+        <p className="text-[var(--app-text-muted)] mt-1">{subtitle}</p>
       </motion.div>
 
       <motion.div

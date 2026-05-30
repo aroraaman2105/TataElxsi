@@ -1,12 +1,15 @@
 import { motion } from 'framer-motion';
 import Button from '../components/design-system/Button';
 
-export default function Assessments() {
+export default function Assessments({
+  title = 'Assessments',
+  subtitle = 'Manage and run autism screening assessments',
+}) {
   return (
     <div className="space-y-8">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <h1 className="text-2xl font-semibold text-[var(--app-text-primary)]">Assessments</h1>
-        <p className="text-[var(--app-text-muted)] mt-1">Manage and run autism screening assessments</p>
+        <h1 className="text-2xl font-semibold text-[var(--app-text-primary)]">{title}</h1>
+        <p className="text-[var(--app-text-muted)] mt-1">{subtitle}</p>
       </motion.div>
 
       <motion.div

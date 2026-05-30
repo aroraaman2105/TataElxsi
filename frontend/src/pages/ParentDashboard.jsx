@@ -1,17 +1,49 @@
 import { motion } from 'framer-motion';
-import { Card } from '../components/design-system';
+import { useNavigate } from 'react-router-dom';
+import { Card, ProgressBar, Button } from '../components/design-system';
+import { ROUTES } from '../config/routes';
 
-const CHILD_NAME = 'Emma';
+const CHILD = {
+  name: 'Emma',
+  age: '4 years old',
+  stage: 'Getting ready for doctor visit',
+};
 
-const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const DAILY_PROGRESS = [
-  { day: 'Mon', done: true, label: 'Speech play', mood: '😊' },
-  { day: 'Tue', done: true, label: 'Motor fun', mood: '🙂' },
-  { day: 'Wed', done: true, label: 'Social time', mood: '😊' },
-  { day: 'Thu', done: false, label: 'Rest day', mood: '—' },
-  { day: 'Fri', done: false, label: 'Speech play', mood: '—' },
-  { day: 'Sat', done: false, label: 'Family activity', mood: '—' },
-  { day: 'Sun', done: false, label: 'Check-in', mood: '—' },
+const JOURNEY_STEPS = [
+  { id: 'screening', label: 'Pre-Screening', status: 'completed', detail: 'Finished at home — great job!' },
+  { id: 'triage', label: 'AI Summary Reviewed', status: 'completed', detail: 'Your report is ready to share' },
+  { id: 'doctor', label: 'Doctor Consultation', status: 'pending', detail: 'Scheduled for Mar 28' },
+  { id: 'therapy', label: 'Therapy Plan', status: 'upcoming', detail: 'Starts after your visit' },
+  { id: 'tracking', label: 'Ongoing Progress', status: 'upcoming', detail: 'Weekly check-ins at home' },
+];
+
+const APPOINTMENTS = [
+  {
+    id: 1,
+    title: 'Doctor visit',
+    with: 'Dr. Sarah Chen',
+    date: 'Mar 28, 2025',
+    time: '10:30 AM',
+    place: 'Sunrise Children\'s Clinic',
+  },
+  {
+    id: 2,
+    title: 'Speech play session',
+    with: 'Maria Lopez',
+    date: 'Apr 2, 2025',
+    time: '2:00 PM',
+    place: 'Video call',
+  },
+];
+
+const WEEKLY_DAYS = [
+  { day: 'Mon', done: true, activity: 'Speech play', mood: '😊' },
+  { day: 'Tue', done: true, activity: 'Motor fun', mood: '🙂' },
+  { day: 'Wed', done: true, activity: 'Social time', mood: '😊' },
+  { day: 'Thu', done: false, activity: 'Rest day', mood: '—' },
+  { day: 'Fri', done: false, activity: 'Speech play', mood: '—' },
+  { day: 'Sat', done: false, activity: 'Family outing', mood: '—' },
+  { day: 'Sun', done: false, activity: 'Weekly check-in', mood: '—' },
 ];
 
 const WEEKLY_SCORES = [
@@ -23,35 +55,42 @@ const WEEKLY_SCORES = [
   { week: 'W6', score: 78 },
 ];
 
-const ALERTS = [
-  {
-    id: 'regression',
-    type: 'attention',
-    emoji: '💛',
-    title: 'Regression detected',
-    message: 'Social play was a bit harder this week. Your therapist has a gentler plan ready—nothing to worry about!',
-    time: '2 days ago',
-  },
-  {
-    id: 'speech',
-    type: 'celebration',
-    emoji: '🎉',
-    title: 'Improvement in speech',
-    message: `${CHILD_NAME} used 3 new words during story time. Great job practicing at home!`,
-    time: 'Today',
-  },
+const THERAPY_ADHERENCE = [
+  { label: 'Speech activities at home', value: 85 },
+  { label: 'Movement & play exercises', value: 72 },
+  { label: 'Social connection time', value: 68 },
 ];
 
 const MILESTONES = [
-  { id: 1, title: 'First shared smile', date: 'Jan 8', done: true },
-  { id: 2, title: 'Said "mama" clearly', date: 'Feb 2', done: true },
-  { id: 3, title: 'Pointed to show interest', date: 'Mar 10', done: true },
-  { id: 4, title: 'Took turns in a game', date: 'In progress', done: false, current: true },
-  { id: 5, title: 'Two-word phrases', date: 'Coming up', done: false },
-  { id: 6, title: 'Played with a friend', date: 'Coming up', done: false },
+  { id: 1, title: 'First shared smile during play', date: 'Jan 8', done: true },
+  { id: 2, title: 'Said a new word clearly', date: 'Feb 2', done: true },
+  { id: 3, title: 'Pointed to show something interesting', date: 'Mar 10', done: true },
+  { id: 4, title: 'Took turns in a simple game', date: 'Working on it', done: false, current: true },
+  { id: 5, title: 'Used two words together', date: 'Coming up', done: false },
 ];
 
-const CHART = { width: 480, height: 200, pad: { top: 24, right: 20, bottom: 36, left: 40 } };
+const DOCTOR_MESSAGES = [
+  {
+    id: 1,
+    from: 'Dr. Sarah Chen',
+    time: 'Mar 18',
+    preview: 'Thanks for completing the home screening. Emma\'s results look ready for our visit — please bring her favorite comfort toy.',
+  },
+  {
+    id: 2,
+    from: 'Dr. Sarah Chen',
+    time: 'Mar 12',
+    preview: 'No need to prepare anything special before the appointment. We\'ll walk you through everything together.',
+  },
+];
+
+const TWIN_DOMAINS = [
+  { label: 'Talking & listening', value: 72, trend: 'Growing steadily' },
+  { label: 'Movement & play', value: 78, trend: 'Strong this month' },
+  { label: 'Connecting with others', value: 65, trend: 'Small steps forward' },
+];
+
+const CHART = { width: 480, height: 180, pad: { top: 20, right: 16, bottom: 32, left: 36 } };
 
 function scalePoint(index, score) {
   const { width, height, pad } = CHART;
@@ -65,136 +104,179 @@ function scalePoint(index, score) {
   return { x, y };
 }
 
-function toPath() {
-  return WEEKLY_SCORES.map((w, i) => {
-    const p = scalePoint(i, w.score);
-    return `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
-  }).join(' ');
+function journeyStatusLabel(status) {
+  if (status === 'completed') return 'Completed';
+  if (status === 'pending') return 'Pending';
+  return 'Up next';
 }
 
-function DailyTracker() {
-  const completed = DAILY_PROGRESS.filter((d) => d.done).length;
-  const total = DAILY_PROGRESS.length;
-  const pct = Math.round((completed / total) * 100);
+function journeyStatusClass(status) {
+  if (status === 'completed') return 'status-pill-success';
+  if (status === 'pending') return 'status-pill-info';
+  return 'status-pill';
+}
 
+function ChildProfileCard() {
   return (
-    <Card className="!p-6 bg-gradient-to-br from-[#ff9ecd]/[0.06] to-transparent border-[#ff9ecd]/15">
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h2 className="text-lg font-semibold text-white">Today&apos;s progress</h2>
-          <p className="text-sm text-slate-400 mt-0.5">How the week is going</p>
+    <Card className="!p-6 bg-gradient-to-br from-[var(--accent-primary-muted)] to-transparent">
+      <div className="flex items-start gap-4">
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-semibold shrink-0 border"
+          style={{
+            background: 'var(--accent-primary-muted)',
+            borderColor: 'color-mix(in srgb, var(--accent-primary) 30%, var(--app-border))',
+            color: 'var(--accent-primary)',
+          }}
+        >
+          {CHILD.name.charAt(0)}
         </div>
-        <div className="text-right">
-          <p className="text-2xl font-bold text-[#ff9ecd] tabular-nums">{pct}%</p>
-          <p className="text-xs text-slate-500">{completed} of {total} days</p>
+        <div className="min-w-0">
+          <p className="text-xs uppercase tracking-wider text-[var(--app-text-muted)] font-medium">Child profile</p>
+          <h2 className="text-xl font-semibold text-[var(--app-text-primary)] mt-1">{CHILD.name}</h2>
+          <dl className="mt-3 space-y-2 text-sm">
+            <div className="flex gap-2">
+              <dt className="text-[var(--app-text-muted)] shrink-0">Age</dt>
+              <dd className="text-[var(--app-text-primary)] font-medium">{CHILD.age}</dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="text-[var(--app-text-muted)] shrink-0">Current stage</dt>
+              <dd className="text-[var(--app-text-primary)] font-medium">{CHILD.stage}</dd>
+            </div>
+          </dl>
         </div>
       </div>
-
-      <div className="grid grid-cols-7 gap-2">
-        {DAILY_PROGRESS.map((item, i) => (
-          <motion.div
-            key={item.day}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className={`flex flex-col items-center rounded-xl p-2 text-center transition-colors ${
-              item.done
-                ? 'bg-[#00ffcc]/10 border border-[#00ffcc]/25'
-                : i === 3
-                  ? 'bg-white/[0.06] border-2 border-[#ff9ecd]/40 ring-1 ring-[#ff9ecd]/20'
-                  : 'bg-white/[0.02] border border-white/5'
-            }`}
-          >
-            <span className="text-[10px] text-slate-500 font-medium">{item.day}</span>
-            <span className="text-lg my-1">{item.done ? '✓' : i === 3 ? '★' : '○'}</span>
-            <span className="text-[9px] text-slate-500 leading-tight hidden sm:block">{item.label}</span>
-          </motion.div>
-        ))}
-      </div>
-
-      <p className="text-sm text-slate-400 mt-4 text-center">
-        You&apos;re doing great — <span className="text-white">Thursday</span> is your next activity day.
-      </p>
     </Card>
   );
 }
 
-function WeeklyGraph() {
-  const path = toPath();
-  const last = WEEKLY_SCORES[WEEKLY_SCORES.length - 1];
-  const first = WEEKLY_SCORES[0];
-  const improvement = last.score - first.score;
+function JourneyStatus() {
+  return (
+    <Card className="!p-6">
+      <h2 className="text-lg font-semibold text-[var(--app-text-primary)]">Current journey status</h2>
+      <p className="text-sm text-[var(--app-text-muted)] mt-1">Where you are in Emma&apos;s care path</p>
+
+      <ul className="mt-5 space-y-3" role="list">
+        {JOURNEY_STEPS.map((step, i) => (
+          <motion.li
+            key={step.id}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.05 }}
+            className="theme-list-row flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-4 rounded-xl"
+          >
+            <div>
+              <p className="font-medium text-[var(--app-text-primary)]">{step.label}</p>
+              <p className="text-sm text-[var(--app-text-muted)] mt-0.5">{step.detail}</p>
+            </div>
+            <span className={`status-pill shrink-0 ${journeyStatusClass(step.status)}`}>
+              {journeyStatusLabel(step.status)}
+            </span>
+          </motion.li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+function UpcomingAppointments() {
+  return (
+    <Card className="!p-6">
+      <h2 className="text-lg font-semibold text-[var(--app-text-primary)]">Upcoming appointments</h2>
+      <p className="text-sm text-[var(--app-text-muted)] mt-1">What&apos;s on the calendar next</p>
+
+      <ul className="mt-5 space-y-3" role="list">
+        {APPOINTMENTS.map((appt, i) => (
+          <motion.li
+            key={appt.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.06 }}
+            className="theme-list-row p-4 rounded-xl"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+              <div>
+                <p className="font-medium text-[var(--app-text-primary)]">{appt.title}</p>
+                <p className="text-sm text-[var(--app-text-muted)] mt-0.5">With {appt.with}</p>
+              </div>
+              <div className="text-sm text-right shrink-0">
+                <p className="text-[var(--app-text-primary)] font-medium">{appt.date}</p>
+                <p className="text-[var(--app-text-muted)]">{appt.time}</p>
+              </div>
+            </div>
+            <p className="text-xs text-[var(--app-text-muted)] mt-2">{appt.place}</p>
+          </motion.li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
+
+function WeeklyProgress() {
+  const completed = WEEKLY_DAYS.filter((d) => d.done).length;
+  const path = WEEKLY_SCORES.map((w, i) => {
+    const p = scalePoint(i, w.score);
+    return `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
+  }).join(' ');
+  const improvement = WEEKLY_SCORES.at(-1).score - WEEKLY_SCORES[0].score;
 
   return (
     <Card className="!p-6">
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold text-white">Weekly improvement</h2>
-        <p className="text-sm text-slate-400 mt-0.5">
-          {CHILD_NAME}&apos;s overall progress — up{' '}
-          <span className="text-[#00ffcc] font-medium">{improvement} points</span> in 6 weeks 🌱
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
+        <div>
+          <h2 className="text-lg font-semibold text-[var(--app-text-primary)]">Weekly progress</h2>
+          <p className="text-sm text-[var(--app-text-muted)] mt-1">
+            {CHILD.name} is moving forward — up {improvement} points over six weeks
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-2xl font-bold text-[var(--accent-primary)] tabular-nums">
+            {completed}/{WEEKLY_DAYS.length}
+          </p>
+          <p className="text-xs text-[var(--app-text-muted)]">activity days this week</p>
+        </div>
       </div>
 
-      <svg viewBox={`0 0 ${CHART.width} ${CHART.height}`} className="w-full h-auto" role="img" aria-label="Weekly improvement chart">
-        <defs>
-          <linearGradient id="weeklyGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#00ffcc" stopOpacity={0.25} />
-            <stop offset="100%" stopColor="#00ffcc" stopOpacity={0} />
-          </linearGradient>
-          <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#00ffcc" floodOpacity="0.4" />
-          </filter>
-        </defs>
+      <div className="grid grid-cols-7 gap-2 mb-6">
+        {WEEKLY_DAYS.map((item) => (
+          <div
+            key={item.day}
+            className={`flex flex-col items-center rounded-xl p-2 text-center border ${
+              item.done
+                ? 'bg-[var(--accent-primary-muted)] border-[color-mix(in_srgb,var(--accent-primary)_25%,var(--app-border))]'
+                : 'bg-[var(--app-surface)] border-[var(--app-border)]'
+            }`}
+          >
+            <span className="text-[10px] text-[var(--app-text-muted)] font-medium">{item.day}</span>
+            <span className="text-base my-1">{item.done ? '✓' : '○'}</span>
+            <span className="text-[9px] text-[var(--app-text-muted)] leading-tight hidden sm:block">
+              {item.activity}
+            </span>
+          </div>
+        ))}
+      </div>
 
-        {[60, 70, 80].map((score) => {
-          const { y } = scalePoint(0, score);
-          return (
-            <line
-              key={score}
-              x1={CHART.pad.left}
-              y1={y}
-              x2={CHART.width - CHART.pad.right}
-              y2={y}
-              stroke="rgba(255,255,255,0.05)"
-              strokeDasharray="4 4"
-            />
-          );
-        })}
+      <svg
+        viewBox={`0 0 ${CHART.width} ${CHART.height}`}
+        className="w-full h-auto"
+        role="img"
+        aria-label="Weekly progress trend over six weeks"
+      >
         <motion.path
           d={path}
           fill="none"
-          stroke="#00ffcc"
+          stroke="var(--accent-primary)"
           strokeWidth={3}
           strokeLinecap="round"
-          strokeLinejoin="round"
-          filter="url(#lineGlow)"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        />
-        <motion.path
-          d={`${path} L ${scalePoint(WEEKLY_SCORES.length - 1, 50).x} ${CHART.height - CHART.pad.bottom} L ${scalePoint(0, 50).x} ${CHART.height - CHART.pad.bottom} Z`}
-          fill="url(#weeklyGradient)"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         />
         {WEEKLY_SCORES.map((w, i) => {
           const p = scalePoint(i, w.score);
           return (
             <g key={w.week}>
-              <motion.circle
-                cx={p.x}
-                cy={p.y}
-                r={5}
-                fill="#00ffcc"
-                stroke="#0b0f14"
-                strokeWidth={2}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3 + i * 0.1 }}
-              />
-              <text x={p.x} y={CHART.height - 12} textAnchor="middle" className="fill-slate-500 text-[11px]">
+              <circle cx={p.x} cy={p.y} r={4} fill="var(--accent-primary)" />
+              <text x={p.x} y={CHART.height - 10} textAnchor="middle" className="fill-[var(--app-text-muted)] text-[10px]">
                 {w.week}
               </text>
             </g>
@@ -205,66 +287,63 @@ function WeeklyGraph() {
   );
 }
 
-function AlertCard({ alert, index }) {
-  const isCelebration = alert.type === 'celebration';
+function TherapyAdherence() {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -12 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.08 }}
-      className={`rounded-2xl p-4 border flex gap-4 ${
-        isCelebration
-          ? 'bg-[#00ffcc]/[0.06] border-[#00ffcc]/20'
-          : 'bg-amber-500/[0.06] border-amber-400/20'
-      }`}
-    >
-      <span className="text-3xl flex-shrink-0" aria-hidden>
-        {alert.emoji}
-      </span>
-      <div className="min-w-0">
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <h3 className="font-semibold text-white text-sm">{alert.title}</h3>
-          <span className="text-xs text-slate-500">{alert.time}</span>
-        </div>
-        <p className="text-sm text-slate-300 mt-1 leading-relaxed">{alert.message}</p>
+    <Card className="!p-6">
+      <h2 className="text-lg font-semibold text-[var(--app-text-primary)]">Therapy adherence</h2>
+      <p className="text-sm text-[var(--app-text-muted)] mt-1">How often home activities were completed this week</p>
+
+      <div className="mt-5 space-y-5">
+        {THERAPY_ADHERENCE.map((item, i) => (
+          <motion.div
+            key={item.label}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.06 }}
+          >
+            <ProgressBar label={item.label} value={item.value} />
+          </motion.div>
+        ))}
       </div>
-    </motion.div>
+
+      <p className="text-sm text-[var(--app-text-muted)] mt-5">
+        You&apos;re doing well — even short sessions count. Consistency matters more than perfection.
+      </p>
+    </Card>
   );
 }
 
 function MilestoneTracker() {
   return (
     <Card className="!p-6">
-      <h2 className="text-lg font-semibold text-white mb-1">Milestone tracker</h2>
-      <p className="text-sm text-slate-400 mb-6">Little wins along the way ✨</p>
+      <h2 className="text-lg font-semibold text-[var(--app-text-primary)]">Milestone tracker</h2>
+      <p className="text-sm text-[var(--app-text-muted)] mt-1">Little wins along the way</p>
 
-      <div className="relative">
-        <div className="absolute left-[15px] top-3 bottom-3 w-0.5 bg-white/10" aria-hidden />
+      <div className="relative mt-6">
+        <div className="absolute left-[15px] top-3 bottom-3 w-0.5 bg-[var(--app-border)]" aria-hidden />
         <ul className="space-y-0" role="list">
           {MILESTONES.map((m, i) => (
             <motion.li
               key={m.id}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.06 }}
-              className="relative flex gap-4 pb-6 last:pb-0"
+              transition={{ delay: i * 0.05 }}
+              className="relative flex gap-4 pb-5 last:pb-0"
             >
               <div
                 className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold border-2 ${
                   m.done
-                    ? 'bg-[#00ffcc]/20 border-[#00ffcc] text-[#00ffcc]'
+                    ? 'bg-[var(--accent-primary-muted)] border-[var(--accent-primary)] text-[var(--accent-primary)]'
                     : m.current
-                      ? 'bg-[#ff9ecd]/20 border-[#ff9ecd] text-[#ff9ecd] animate-pulse'
-                      : 'bg-white/5 border-white/15 text-slate-600'
+                      ? 'bg-[color-mix(in_srgb,#ff9ecd_12%,var(--app-surface))] border-[#ff9ecd] text-[#ff9ecd]'
+                      : 'bg-[var(--app-surface)] border-[var(--app-border)] text-[var(--app-text-muted)]'
                 }`}
               >
                 {m.done ? '✓' : m.current ? '★' : ''}
               </div>
-              <div className={`flex-1 pt-0.5 ${!m.done && !m.current ? 'opacity-50' : ''}`}>
-                <p className={`text-sm font-medium ${m.done || m.current ? 'text-white' : 'text-slate-400'}`}>
-                  {m.title}
-                </p>
-                <p className="text-xs text-slate-500 mt-0.5">
+              <div className={`flex-1 pt-0.5 ${!m.done && !m.current ? 'opacity-60' : ''}`}>
+                <p className="text-sm font-medium text-[var(--app-text-primary)]">{m.title}</p>
+                <p className="text-xs text-[var(--app-text-muted)] mt-0.5">
                   {m.done ? `Reached ${m.date}` : m.current ? 'Working on it now' : m.date}
                 </p>
               </div>
@@ -276,89 +355,107 @@ function MilestoneTracker() {
   );
 }
 
-function ParentTips() {
+function DoctorMessages() {
   return (
-    <Card className="!p-5 bg-gradient-to-br from-[#ff9ecd]/[0.04] to-transparent border-[#ff9ecd]/15">
-      <div className="flex items-start gap-4">
-        <div className="w-9 h-9 rounded-lg bg-[#ff9ecd]/10 flex items-center justify-center text-[#ff9ecd] flex-shrink-0 border border-[#ff9ecd]/20">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-          </svg>
-        </div>
-        <div>
-          <h3 className="font-semibold text-white text-sm">Today&apos;s tip</h3>
-          <p className="text-sm text-slate-300 mt-1 leading-relaxed">
-            Use visual cards for speech activities today. Emma responds <span className="text-[#00ffcc] font-medium">40% better</span> to visual prompts than verbal ones when tired.
-          </p>
-        </div>
-      </div>
+    <Card className="!p-6">
+      <h2 className="text-lg font-semibold text-[var(--app-text-primary)]">Messages from doctor</h2>
+      <p className="text-sm text-[var(--app-text-muted)] mt-1">Notes and reminders from your care team</p>
+
+      <ul className="mt-5 space-y-3" role="list">
+        {DOCTOR_MESSAGES.map((msg, i) => (
+          <motion.li
+            key={msg.id}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.06 }}
+            className="theme-list-row p-4 rounded-xl"
+          >
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <p className="text-sm font-medium text-[var(--app-text-primary)]">{msg.from}</p>
+              <span className="text-xs text-[var(--app-text-muted)]">{msg.time}</span>
+            </div>
+            <p className="text-sm text-[var(--app-text-muted)] leading-relaxed">{msg.preview}</p>
+          </motion.li>
+        ))}
+      </ul>
     </Card>
   );
 }
 
-function TherapistNotes() {
+function DigitalTwinSnapshot() {
+  const navigate = useNavigate();
+
   return (
-    <Card className="!p-5 bg-gradient-to-br from-[#00ffcc]/[0.04] to-transparent border-[#00ffcc]/15">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-white text-sm">Therapist Notes</h3>
-          <span className="text-[10px] text-slate-500 font-medium">Updated yesterday</span>
+    <Card className="!p-6">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
+        <div>
+          <h2 className="text-lg font-semibold text-[var(--app-text-primary)]">Digital twin snapshot</h2>
+          <p className="text-sm text-[var(--app-text-muted)] mt-1">
+            A simple picture of how {CHILD.name} is growing in key areas
+          </p>
         </div>
-        <p className="text-sm text-slate-300 leading-relaxed">
-          Emma is showing great progress in turn-taking. Let&apos;s focus on two-word phrases during dinner table conversations this week.
-        </p>
-        <div className="flex items-center gap-2 pt-2 border-t border-white/5">
-          <div className="w-6 h-6 rounded-full bg-[#00ffcc]/20 flex items-center justify-center text-[#00ffcc] text-xs font-bold">
-            S
-          </div>
-          <span className="text-xs text-slate-400 font-medium">Dr. Sarah Cole, Speech Pathologist</span>
-        </div>
+        <Button size="sm" variant="secondary" onClick={() => navigate(ROUTES.DIGITAL_TWIN)}>
+          View full picture
+        </Button>
       </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {TWIN_DOMAINS.map((domain, i) => (
+          <motion.div
+            key={domain.label}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.06 }}
+            className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] p-4"
+          >
+            <p className="text-sm font-medium text-[var(--app-text-primary)]">{domain.label}</p>
+            <p className="text-2xl font-bold text-[var(--accent-primary)] tabular-nums mt-2">{domain.value}%</p>
+            <ProgressBar value={domain.value} showLabel={false} height="sm" className="mt-3" />
+            <p className="text-xs text-[var(--app-text-muted)] mt-2">{domain.trend}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      <p className="text-xs text-[var(--app-text-muted)] mt-4">
+        This snapshot updates as you complete activities and visits. It helps your team see the full story over time.
+      </p>
     </Card>
   );
 }
 
 export default function ParentDashboard() {
   return (
-    <div className="space-y-6 pb-12 w-full max-w-7xl mx-auto px-4 sm:px-6">
-      <motion.div
+    <div className="space-y-6 pb-12 w-full max-w-7xl mx-auto">
+      <motion.header
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl bg-gradient-to-r from-[#ff9ecd]/10 via-[#00ffcc]/5 to-transparent border border-white/10 p-6"
+        className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface)] p-6"
       >
-        <p className="text-sm text-[#ff9ecd] font-medium mb-1">Welcome back 👋</p>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-white">
-          {CHILD_NAME}&apos;s journey
+        <p className="text-sm text-[var(--accent-primary)] font-medium mb-1">Welcome back</p>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-[var(--app-text-primary)]">
+          {CHILD.name}&apos;s journey
         </h1>
-        <p className="text-slate-400 mt-2 text-sm sm:text-base max-w-xl">
-          A simple look at how things are going — no medical jargon, just what matters for your family.
+        <p className="text-[var(--app-text-muted)] mt-2 text-sm sm:text-base max-w-2xl">
+          A calm, simple overview of where things stand — no medical jargon, just what matters for your family.
         </p>
-      </motion.div>
+      </motion.header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Column 1: Daily Tracker & Milestones */}
         <div className="space-y-6">
-          <DailyTracker />
+          <ChildProfileCard />
+          <JourneyStatus />
+          <UpcomingAppointments />
+        </div>
+
+        <div className="space-y-6">
+          <WeeklyProgress />
+          <TherapyAdherence />
           <MilestoneTracker />
         </div>
 
-        {/* Column 2: Weekly Progress & Parent Tips */}
         <div className="space-y-6">
-          <WeeklyGraph />
-          <ParentTips />
-        </div>
-
-        {/* Column 3: Alerts & Therapist Notes */}
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-lg font-semibold text-white mb-3">Updates for you</h2>
-            <div className="space-y-3">
-              {ALERTS.map((alert, i) => (
-                <AlertCard key={alert.id} alert={alert} index={i} />
-              ))}
-            </div>
-          </div>
-          <TherapistNotes />
+          <DoctorMessages />
+          <DigitalTwinSnapshot />
         </div>
       </div>
     </div>

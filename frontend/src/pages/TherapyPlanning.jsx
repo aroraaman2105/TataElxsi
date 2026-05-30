@@ -212,19 +212,21 @@ function OptimizationToggle({ optimized, onChange }) {
   );
 }
 
-export default function TherapyPlanning() {
+export default function TherapyPlanning({ hideHeader = false }) {
   const [optimized, setOptimized] = useState(false);
   const plans = optimized ? THERAPY_PLANS.after : THERAPY_PLANS.before;
   const ai = optimized ? AI_RECOMMENDATIONS.after : AI_RECOMMENDATIONS.before;
 
   return (
     <div className="space-y-8 pb-12">
-      <div>
-        <h1 className="text-2xl font-semibold text-white">Therapy Planning</h1>
-        <p className="text-slate-400 mt-1">
-          Daily therapy schedule with adaptive AI recommendations based on child progress.
-        </p>
-      </div>
+      {!hideHeader && (
+        <div>
+          <h1 className="text-2xl font-semibold text-white">Therapy Planning</h1>
+          <p className="text-slate-400 mt-1">
+            Daily therapy schedule with adaptive AI recommendations based on child progress.
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

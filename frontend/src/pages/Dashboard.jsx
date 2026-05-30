@@ -148,15 +148,17 @@ const itemVariants = {
   visible: { opacity: 1, x: 0 },
 };
 
-export default function Dashboard() {
+export default function Dashboard({ hideHeader = false }) {
     const [showSuggestions, setShowSuggestions] = useState(false);
 
   return (
     <div className="space-y-8">
-      <motion.div initial={false} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
-        <p className="text-slate-400 mt-1">Overview of your TELIPORT AI platform metrics</p>
-      </motion.div>
+      {!hideHeader && (
+        <motion.div initial={false} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
+          <p className="text-slate-400 mt-1">Overview of your TELIPORT AI platform metrics</p>
+        </motion.div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Patient Overview Widget */}

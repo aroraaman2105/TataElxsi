@@ -372,7 +372,11 @@ const AGENT_DETAILS = {
   },
 };
 
-export default function AgenticSystem() {
+export default function AgenticSystem({
+  title = 'Agentic AI',
+  subtitle = 'Specialized agents collaborate through a shared patient data lake. Click an agent to focus the data flows and view its role.',
+  badge = 'Multi-agent orchestration',
+}) {
   const [selected, setSelected] = useState(null);
   const { isLight } = useTheme();
   const detail = selected ? AGENT_DETAILS[selected] : null;
@@ -381,13 +385,10 @@ export default function AgenticSystem() {
     <div className="space-y-8 pb-12">
       <motion.div initial={false} animate={{ opacity: 1, y: 0 }}>
         <p className="text-[10px] uppercase tracking-[0.25em] text-[#00ffcc] font-semibold mb-2">
-          Multi-agent orchestration
+          {badge}
         </p>
-        <h1 className="text-2xl font-semibold text-[var(--app-text-primary)]">Agentic AI System</h1>
-        <p className="text-[var(--app-text-muted)] mt-1 max-w-2xl">
-          Specialized agents collaborate through a shared patient data lake. Click an agent to focus the
-          data flows and view its role.
-        </p>
+        <h1 className="text-2xl font-semibold text-[var(--app-text-primary)]">{title}</h1>
+        <p className="text-[var(--app-text-muted)] mt-1 max-w-2xl">{subtitle}</p>
       </motion.div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-8 items-start">
