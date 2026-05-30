@@ -29,6 +29,7 @@ export const ROUTES = {
   PATIENT_QUEUE: '/dashboard/patient-queue',
   CLINICAL_REVIEW: '/dashboard/clinical-review',
   DIAGNOSIS_SUPPORT: '/dashboard/diagnosis-support',
+  AI_INSIGHTS: '/dashboard/ai-insights',
   REPORTS: '/dashboard/reports',
   ASSIGNED_PATIENTS: '/dashboard/assigned-patients',
   THERAPY_PLANNER: '/dashboard/therapy-planner',
@@ -48,13 +49,14 @@ export const ROLE_NAV = {
     { to: ROUTES.PRE_SCREENING, label: 'Pre-Screening', icon: ICONS.preScreening },
     { to: ROUTES.AI_TRIAGE, label: 'AI Triage Report', icon: ICONS.aiTriage },
     { to: ROUTES.PROGRESS, label: 'Progress Tracking', icon: ICONS.progress },
-    { to: ROUTES.APPOINTMENTS, label: 'Appointments', icon: ICONS.appointments },
+    { to: ROUTES.APPOINTMENTS, label: 'Care Journey', icon: ICONS.appointments },
   ],
   doctor: [
     { to: ROUTES.DASHBOARD, label: 'Dashboard', end: true, icon: ICONS.dashboard },
     { to: ROUTES.PATIENT_QUEUE, label: 'Patient Queue', icon: ICONS.patientQueue },
     { to: ROUTES.CLINICAL_REVIEW, label: 'Clinical Review', icon: ICONS.clinicalReview },
     { to: ROUTES.DIAGNOSIS_SUPPORT, label: 'Diagnosis Support', icon: ICONS.diagnosis },
+    { to: ROUTES.AI_INSIGHTS, label: 'AI Insights', icon: ICONS.aiTriage },
     { to: ROUTES.REPORTS, label: 'Reports', icon: ICONS.reports },
   ],
   therapist: [

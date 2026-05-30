@@ -21,7 +21,7 @@ function RoleCard({ persona, onSelect }) {
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
       whileTap={{ scale: 0.99 }}
       onClick={() => onSelect(persona.id)}
-      className="group relative w-full text-left rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] hover:border-white/20 hover:shadow-[0_12px_40px_rgba(0,255,204,0.08)] transition-shadow duration-300"
+      className="group relative w-full text-left rounded-2xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] backdrop-blur-md overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-bg)] hover:border-[var(--app-border-strong)] hover:shadow-[0_12px_40px_rgba(0,255,204,0.08)] transition-all duration-300"
     >
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
@@ -55,21 +55,21 @@ function RoleCard({ persona, onSelect }) {
           </svg>
         </div>
 
-        <h2 className="text-lg sm:text-xl font-semibold text-white tracking-tight mb-3">{persona.title}</h2>
+        <h2 className="text-lg sm:text-xl font-semibold text-[var(--app-text-primary)] tracking-tight mb-3">{persona.title}</h2>
 
         <div className="space-y-2.5 text-sm">
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-0.5">Who uses it</p>
-            <p className="text-slate-300">{persona.cardWho}</p>
+            <p className="text-[10px] uppercase tracking-wider text-[var(--app-text-muted)] font-semibold mb-0.5">Who uses it</p>
+            <p className="text-[var(--app-text-secondary)]">{persona.cardWho}</p>
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-0.5">What you&apos;ll do</p>
-            <p className="text-slate-400 leading-snug">{persona.cardDoes}</p>
+            <p className="text-[10px] uppercase tracking-wider text-[var(--app-text-muted)] font-semibold mb-0.5">What you&apos;ll do</p>
+            <p className="text-[var(--app-text-muted)] leading-snug">{persona.cardDoes}</p>
           </div>
         </div>
 
-        <div className="mt-5 pt-4 border-t border-white/8 flex items-center justify-between">
-          <span className="text-sm font-medium text-slate-400 group-hover:text-white transition-colors">
+        <div className="mt-5 pt-4 border-t border-[var(--app-border)] flex items-center justify-between">
+          <span className="text-sm font-medium text-[var(--app-text-muted)] group-hover:text-[var(--app-text-primary)] transition-colors">
             Enter workspace
           </span>
           <span
@@ -98,10 +98,10 @@ export default function Landing() {
   const handleContinue = () => navigate('/dashboard');
 
   return (
-    <div className="min-h-screen bg-[#0b0f14] text-slate-200 overflow-x-hidden relative flex flex-col">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text-secondary)] overflow-x-hidden relative flex flex-col">
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-15%] left-[15%] w-[55vw] max-w-3xl h-[55vw] rounded-full bg-[#00ffcc]/[0.06] blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[5%] w-[45vw] max-w-2xl h-[45vw] rounded-full bg-[#00d4ff]/[0.05] blur-[100px]" />
+        <div className="absolute top-[-15%] left-[15%] w-[55vw] max-w-3xl h-[55vw] rounded-full bg-[#00ffcc]/[0.06] blur-[120px] ambient-orb-teal" />
+        <div className="absolute bottom-[-10%] right-[5%] w-[45vw] max-w-2xl h-[45vw] rounded-full bg-[#00d4ff]/[0.05] blur-[100px] ambient-orb-blue" />
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{
@@ -112,21 +112,21 @@ export default function Landing() {
         />
       </div>
 
-      <header className="relative z-10 border-b border-white/5 bg-[#0b0f14]/80 backdrop-blur-xl shrink-0">
+      <header className="relative z-10 border-b border-[var(--app-border)] bg-[var(--app-nav-bg)] backdrop-blur-xl shrink-0">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00ffcc]/25 to-[#00d4ff]/20 border border-[#00ffcc]/35 flex items-center justify-center shadow-glowGreen">
               <span className="text-[#00ffcc] font-bold text-lg font-mono">T</span>
             </div>
             <div>
-              <span className="font-semibold text-white tracking-tight block leading-tight">TELIPORT AI</span>
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Clinical Platform</span>
+              <span className="font-semibold text-[var(--app-text-primary)] tracking-tight block leading-tight">TELIPORT AI</span>
+              <span className="text-[10px] text-[var(--app-text-muted)] uppercase tracking-wider">Clinical Platform</span>
             </div>
           </div>
           <div className="flex items-center">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00ffcc] animate-pulse shadow-[0_0_8px_#00ffcc]" />
-              <span className="text-xs text-slate-400 hidden sm:inline">Secure demo</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--app-border)] bg-[var(--app-surface-muted)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)] animate-pulse shadow-[0_0_8px_var(--accent-primary)]" />
+              <span className="text-xs text-[var(--app-text-muted)] hidden sm:inline">Secure demo</span>
             </div>
             {isAuthenticated && personaConfig && (
               <motion.button
@@ -159,20 +159,20 @@ export default function Landing() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.08 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#00ffcc]/25 bg-[#00ffcc]/5 text-[#00ffcc] text-xs font-medium mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--accent-primary)]/25 bg-[var(--accent-primary-muted)] text-[var(--accent-primary)] text-xs font-medium mb-6"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00ffcc]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]" />
             Select your role to continue
           </motion.div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-[1.1] mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--app-text-primary)] tracking-tight leading-[1.1] mb-4">
             WELCOME TO{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00ffcc] via-cyan-300 to-[#00d4ff]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)]">
               TELIPORT AI
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-400 leading-relaxed">
+          <p className="text-base sm:text-lg text-[var(--app-text-muted)] leading-relaxed">
             AI-Powered Autism Screening and Continuous Care Ecosystem
           </p>
         </motion.div>
@@ -192,7 +192,7 @@ export default function Landing() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.55 }}
-          className="text-center text-xs text-slate-600 mt-10"
+          className="text-center text-xs text-[var(--app-text-muted)] mt-10"
         >
           Demo environment · No password required · Your role is saved locally
         </motion.p>

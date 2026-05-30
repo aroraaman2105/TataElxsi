@@ -151,7 +151,12 @@ function FactorCard({ factor, index }) {
   );
 }
 
-export default function ExplainableAIPanel() {
+export default function ExplainableAIPanel({
+  confidence = OVERALL_CONFIDENCE,
+  factors = CONTRIBUTING_FACTORS,
+  importance = FEATURE_IMPORTANCE,
+  summary = CLINICAL_SUMMARY,
+}) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 16 }}
@@ -175,7 +180,7 @@ export default function ExplainableAIPanel() {
               </p>
             </div>
             <div className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
-              <ConfidenceRing value={OVERALL_CONFIDENCE} />
+              <ConfidenceRing value={confidence} />
               <div>
                 <p className="text-sm font-medium text-white">Overall model confidence</p>
                 <p className="text-xs text-slate-400 mt-0.5 max-w-[200px]">
@@ -193,7 +198,7 @@ export default function ExplainableAIPanel() {
               Ranked findings with per-factor confidence scores
             </p>
             <ul className="space-y-3" role="list">
-              {CONTRIBUTING_FACTORS.map((factor, index) => (
+              {factors.map((factor, index) => (
                 <FactorCard key={factor.id} factor={factor} index={index} />
               ))}
             </ul>
@@ -205,7 +210,7 @@ export default function ExplainableAIPanel() {
               Relative weight of each signal in the fused prediction
             </p>
             <div className="rounded-lg border border-white/8 bg-[#0b0f14]/60 p-5">
-              <FeatureImportanceChart features={FEATURE_IMPORTANCE} />
+              <FeatureImportanceChart features={importance} />
             </div>
           </div>
         </div>
@@ -224,7 +229,7 @@ export default function ExplainableAIPanel() {
               Clinical interpretation
             </h3>
             <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line font-[450]">
-              {CLINICAL_SUMMARY}
+              {summary}
             </p>
           </div>
           <p className="text-[11px] text-slate-600 mt-4 leading-relaxed">

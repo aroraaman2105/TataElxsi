@@ -13,7 +13,7 @@ import RoleHome from './pages/RoleHome';
 import RoleDashboard from './pages/RoleDashboard';
 
 import PreScreeningHub from './pages/PreScreeningHub';
-
+import MasimScreening from './pages/MasimScreening';
 import AITriageReport from './pages/AITriageReport';
 
 import ProgressTracking from './pages/ProgressTracking';
@@ -25,7 +25,7 @@ import PatientQueue from './pages/PatientQueue';
 import ClinicalReview from './pages/ClinicalReview';
 
 import DiagnosisSupport from './pages/DiagnosisSupport';
-
+import AIEvaluation from './pages/AIEvaluation';
 import Reports from './pages/Reports';
 
 import AssignedPatients from './pages/AssignedPatients';
@@ -101,7 +101,7 @@ export default function App() {
         <Route path="clinical-review" element={<P><ClinicalReview /></P>} />
 
         <Route path="diagnosis-support" element={<P><DiagnosisSupport /></P>} />
-
+        <Route path="ai-insights" element={<P><AIEvaluation /></P>} />
         <Route path="reports" element={<P><Reports /></P>} />
 
 
@@ -133,9 +133,7 @@ export default function App() {
 
 
         {/* Legacy route redirects */}
-
-        <Route path="masim" element={<Navigate to="/dashboard" replace />} />
-
+        <Route path="masim" element={<P><MasimScreening /></P>} />
         <Route path="therapy" element={<Navigate to="/dashboard" replace />} />
 
         <Route path="parent" element={<Navigate to="/dashboard" replace />} />

@@ -2,7 +2,7 @@ import { usePersona } from '../context/PersonaContext';
 import { PERSONA_IDS } from '../config/personas';
 import Dashboard from './Dashboard';
 import ParentDashboard from './ParentDashboard';
-import TherapyPlanning from './TherapyPlanning';
+import TherapistDashboard from './TherapistDashboard';
 
 export default function RoleDashboard() {
   const { persona } = usePersona();
@@ -12,7 +12,7 @@ export default function RoleDashboard() {
   }
 
   if (persona === PERSONA_IDS.therapist) {
-    return <TherapyPlanning />;
+    return <TherapistDashboard />;
   }
 
   return <Dashboard />;

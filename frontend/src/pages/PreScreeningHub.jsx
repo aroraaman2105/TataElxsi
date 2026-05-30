@@ -223,64 +223,363 @@ function ProfileStep({ profile, onChange }) {
 }
 
 
-function AnalysisStep({ ready, analyzing, analysisDone, onRun, checklist, riskScore }) {
+function AnalysisStep({ ready, analyzing, analysisDone, onRun, checklist, riskScore, progress }) {
+  const [activeLog, setActiveLog] = useState('Initializing MASIM pipelines...');
+
+  const pipelineLogs = [
+    '[Intake] Initializing pipelines... Loading video keypoint trackers...',
+    '[CV] Mapping 68-point facial landmark mesh for joint attention...',
+    '[Speech] Parsing vocal acoustics & prosody pitch jitter...',
+    '[EEG] Calculating spectral density in alpha and theta bands...',
+    '[CV] Hand flapping motor patterns detected in video (freq: 2.8Hz)',
+    '[Speech] Vocal pitch variance flat prosody detection active (variance < 1.4Hz)',
+    '[EEG] TBR ratio: 4.75 anomalous in frontal cortex F3-F4',
+    '[Behavioral] Integrating questionnaire answers into assessment vector...',
+    '[Fusion] Converging signals into Multimodal Fusion Transformer...',
+    '[Fusion] Completing cross-attention matrix calculations...',
+    '[Fusion] Core analysis outputs resolved.',
+  ];
+
+  useEffect(() => {
+    if (analyzing) {
+      const logIdx = Math.min(
+        pipelineLogs.length - 1,
+        Math.floor((progress / 100) * pipelineLogs.length)
+      );
+      setActiveLog(pipelineLogs[logIdx]);
+    }
+  }, [analyzing, progress]);
+
   return (
     <div className="space-y-6">
-      {riskScore !== null && (
-        <div className="rounded-xl border border-[var(--app-border)] bg-[var(--accent-primary-muted)] p-4 flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-wider text-[var(--app-text-muted)] font-semibold">
-              Questionnaire result
-            </p>
-            <p className="text-sm text-[var(--app-text-primary)] mt-1">
-              Behavioral Risk Score: <span className="font-bold tabular-nums">{riskScore}</span>
-            </p>
-          </div>
-          <span className="status-pill status-pill-info">Included in analysis</span>
-        </div>
-      )}
+      {/* Inputs Checklist */}
       <div className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-5">
-        <p className="text-sm font-medium text-[var(--app-text-primary)] mb-3">Ready to analyze</p>
-        <ul className="space-y-2">
+        <p className="text-sm font-semibold text-[var(--app-text-primary)] mb-3">Input Modality Verification</p>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {checklist.map((item) => (
-            <li key={item.label} className="flex items-center gap-2 text-sm">
-              <span className={item.done ? 'text-[var(--accent-success)]' : 'text-[var(--app-text-muted)]'}>
-                {item.done ? '✓' : '○'}
+            <div key={item.label} className="p-3 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] flex flex-col justify-between">
+              <span className="text-[10px] text-[var(--app-text-muted)] uppercase tracking-wider font-semibold">
+                {item.label.split(' ')[0]}
               </span>
-              <span className={item.done ? 'text-[var(--app-text-primary)]' : 'text-[var(--app-text-muted)]'}>
-                {item.label}
-              </span>
-            </li>
+              <div className="flex items-center gap-1.5 mt-2">
+                <span className={`w-2 h-2 rounded-full ${item.done ? 'bg-[var(--accent-success)]' : 'bg-[var(--app-text-muted)]'}`} />
+                <span className="text-xs text-[var(--app-text-primary)] font-medium">
+                  {item.done ? 'Ready' : 'Pending'}
+                </span>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
 
-      {!analysisDone ? (
+      {/* Interactive Workflow Diagram Panel */}
+      <div className="rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-muted)] p-5 relative overflow-hidden">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <p className="text-xs uppercase tracking-wider text-[var(--accent-primary)] font-semibold">
+              MASIM Multimodal Fusion Architecture
+            </p>
+            <p className="text-[10px] text-[var(--app-text-muted)] mt-0.5">
+              Interactive visualization of signal flow through neural models and behavioral mapping.
+            </p>
+          </div>
+          {analyzing && (
+            <span className="status-pill status-pill-info text-[10px] animate-pulse">
+              Fusing Data Streams...
+            </span>
+          )}
+        </div>
+
+        {/* The Node Connections Grid */}
+        <div className="grid grid-cols-11 gap-2 items-center min-h-[220px] relative">
+          
+          {/* Column 1-3: Source Inputs */}
+          <div className="col-span-3 space-y-3">
+            <div className="p-2.5 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-[var(--accent-primary-muted)] border border-[var(--app-border)] flex items-center justify-center text-[var(--accent-primary)] font-semibold text-sm shrink-0">
+                📹
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-[var(--app-text-primary)] truncate">Play Video</p>
+                <p className="text-[9px] text-[var(--app-text-muted)]">Behavior Source</p>
+              </div>
+            </div>
+
+            <div className="p-2.5 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-[var(--accent-secondary-muted)] border border-[var(--app-border)] flex items-center justify-center text-[var(--accent-secondary)] font-semibold text-sm shrink-0">
+                🎙️
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-[var(--app-text-primary)] truncate">Acoustic Audio</p>
+                <p className="text-[9px] text-[var(--app-text-muted)]">Speech Source</p>
+              </div>
+            </div>
+
+            <div className="p-2.5 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-[var(--app-border)] flex items-center justify-center text-purple-400 font-semibold text-sm shrink-0">
+                ⚡
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-[var(--app-text-primary)] truncate">EEG Signal</p>
+                <p className="text-[9px] text-[var(--app-text-muted)]">Neural Waves</p>
+              </div>
+            </div>
+
+            <div className="p-2.5 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface)] flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-yellow-500/10 border border-[var(--app-border)] flex items-center justify-center text-yellow-400 font-semibold text-sm shrink-0">
+                📝
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-[var(--app-text-primary)] truncate">Parent Forms</p>
+                <p className="text-[9px] text-[var(--app-text-muted)]">Questionnaire</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 4: Connector lines 1 */}
+          <div className="col-span-1 flex flex-col justify-around h-full min-h-[160px] items-center">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div key={idx} className="w-full h-px bg-[var(--app-border)] relative">
+                {analyzing && (
+                  <motion.div
+                    className="absolute top-[-2px] left-0 w-2 h-1 rounded-full bg-[var(--accent-primary)]"
+                    animate={{ left: ['0%', '100%'] }}
+                    transition={{ repeat: Infinity, duration: 1.2 + idx * 0.2, ease: 'linear' }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Column 5-7: AI Processing Engines */}
+          <div className="col-span-3 space-y-3">
+            <div className={`p-2.5 rounded-lg border transition-all duration-300 ${analyzing ? 'border-[var(--accent-primary)] bg-[var(--accent-primary-muted)] shadow-[0_0_12px_rgba(0,255,204,0.1)]' : 'border-[var(--app-border)] bg-[var(--app-surface)]'}`}>
+              <p className="text-xs font-bold text-[var(--app-text-primary)]">Computer Vision</p>
+              <p className="text-[9px] text-[var(--app-text-muted)]">Keypoint & Joint Attention</p>
+              {analyzing && (
+                <div className="mt-1 flex gap-0.5 h-0.5">
+                  <motion.div className="flex-1 bg-[var(--accent-primary)]" animate={{ opacity: [0.2, 1, 0.2] }} transition={{ repeat: Infinity, duration: 0.8 }} />
+                  <motion.div className="flex-1 bg-[var(--accent-primary)]" animate={{ opacity: [1, 0.2, 1] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} />
+                </div>
+              )}
+            </div>
+
+            <div className={`p-2.5 rounded-lg border transition-all duration-300 ${analyzing ? 'border-[var(--accent-secondary)] bg-[var(--accent-secondary-muted)] shadow-[0_0_12px_rgba(0,212,255,0.1)]' : 'border-[var(--app-border)] bg-[var(--app-surface)]'}`}>
+              <p className="text-xs font-bold text-[var(--app-text-primary)]">Speech Analysis</p>
+              <p className="text-[9px] text-[var(--app-text-muted)]">Prosody Pitch & Spectrogram</p>
+              {analyzing && (
+                <div className="mt-1 flex gap-0.5 h-0.5">
+                  <motion.div className="flex-1 bg-[var(--accent-secondary)]" animate={{ opacity: [0.2, 1, 0.2] }} transition={{ repeat: Infinity, duration: 0.8 }} />
+                  <motion.div className="flex-1 bg-[var(--accent-secondary)]" animate={{ opacity: [1, 0.2, 1] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} />
+                </div>
+              )}
+            </div>
+
+            <div className={`p-2.5 rounded-lg border transition-all duration-300 ${analyzing ? 'border-purple-500/40 bg-purple-500/5 shadow-[0_0_12px_rgba(168,85,247,0.1)]' : 'border-[var(--app-border)] bg-[var(--app-surface)]'}`}>
+              <p className="text-xs font-bold text-[var(--app-text-primary)]">Neural Analysis</p>
+              <p className="text-[9px] text-[var(--app-text-muted)]">Theta-Beta Bands FFT</p>
+              {analyzing && (
+                <div className="mt-1 flex gap-0.5 h-0.5">
+                  <motion.div className="flex-1 bg-purple-400" animate={{ opacity: [0.2, 1, 0.2] }} transition={{ repeat: Infinity, duration: 0.8 }} />
+                  <motion.div className="flex-1 bg-purple-400" animate={{ opacity: [1, 0.2, 1] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} />
+                </div>
+              )}
+            </div>
+
+            <div className={`p-2.5 rounded-lg border transition-all duration-300 ${analyzing ? 'border-yellow-500/40 bg-yellow-500/5 shadow-[0_0_12px_rgba(234,179,8,0.1)]' : 'border-[var(--app-border)] bg-[var(--app-surface)]'}`}>
+              <p className="text-xs font-bold text-[var(--app-text-primary)]">Behavioral Assessment</p>
+              <p className="text-[9px] text-[var(--app-text-muted)]">Clinical Indexing Model</p>
+              {analyzing && (
+                <div className="mt-1 flex gap-0.5 h-0.5">
+                  <motion.div className="flex-1 bg-yellow-400" animate={{ opacity: [0.2, 1, 0.2] }} transition={{ repeat: Infinity, duration: 0.8 }} />
+                  <motion.div className="flex-1 bg-yellow-400" animate={{ opacity: [1, 0.2, 1] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Column 8: Connector lines 2 */}
+          <div className="col-span-1 flex flex-col justify-around h-full min-h-[160px] items-center">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div key={idx} className="w-full h-px bg-[var(--app-border)] relative">
+                {analyzing && (
+                  <motion.div
+                    className="absolute top-[-2px] left-0 w-2 h-1 rounded-full bg-[var(--accent-secondary)]"
+                    animate={{ left: ['0%', '100%'] }}
+                    transition={{ repeat: Infinity, duration: 0.8 + idx * 0.15, ease: 'linear' }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Column 9-11: Multimodal Fusion Engine */}
+          <div className="col-span-3 flex flex-col items-center justify-center">
+            <motion.div
+              className={`w-20 h-20 rounded-full border-2 flex items-center justify-center flex-col p-1 text-center relative transition-all duration-500 ${
+                analyzing
+                  ? 'border-[var(--accent-primary)] bg-[var(--accent-primary-muted)] shadow-[0_0_24px_rgba(0,255,204,0.35)]'
+                  : 'border-[var(--app-border)] bg-[var(--app-surface)] shadow-md'
+              }`}
+              animate={analyzing ? { rotate: 360, scale: [1, 1.06, 1] } : {}}
+              transition={analyzing ? { rotate: { repeat: Infinity, duration: 5, ease: 'linear' }, scale: { repeat: Infinity, duration: 1.5, ease: 'easeInOut' } } : {}}
+            >
+              <div className="absolute inset-[-4px] rounded-full border border-dashed border-[var(--accent-secondary)]/40 animate-[spin_10s_linear_infinite]" />
+              <span className="text-[10px] font-extrabold text-[var(--app-text-primary)] tracking-tighter uppercase relative z-10">MULTIMODAL</span>
+              <span className="text-[9px] text-[var(--accent-primary)] font-bold tracking-wide uppercase relative z-10">FUSION</span>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Running analysis log overlay */}
+      <AnimatePresence>
+        {analyzing && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary-muted)] p-4"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs font-semibold text-[var(--app-text-primary)] flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-ping" />
+                Active Model Pipeline Inference
+              </span>
+              <span className="text-xs font-bold text-[var(--accent-primary)] tabular-nums">{progress}%</span>
+            </div>
+            <ProgressBar value={progress} showLabel={false} height="sm" />
+            <p className="text-[10px] font-mono text-[var(--accent-primary)] mt-2 bg-black/40 px-2 py-1.5 rounded border border-white/5 truncate">
+              {activeLog}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Pre-Screening Run trigger */}
+      {!analysisDone && !analyzing && (
         <div className="text-center py-4">
           <p className="text-sm text-[var(--app-text-muted)] mb-4 max-w-md mx-auto">
             MASIM combines your uploads and questionnaire into one easy-to-read summary for your doctor visit.
           </p>
           <Button size="lg" onClick={onRun} disabled={!ready || analyzing}>
-            {analyzing ? 'Running analysis…' : 'Run MASIM Analysis'}
+            Run MASIM Analysis
           </Button>
           {!ready && (
             <p className="text-xs text-[var(--app-text-muted)] mt-3">
-              Complete the required steps above before running analysis.
+              Complete all required checklist items above to activate analysis.
             </p>
           )}
         </div>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-[color-mix(in_srgb,var(--accent-success)_30%,var(--app-border))] bg-[color-mix(in_srgb,var(--accent-success)_8%,var(--app-surface))] p-5 text-center"
-        >
-          <p className="text-lg font-semibold text-[var(--app-text-primary)]">Pre-screening complete</p>
-          <p className="text-sm text-[var(--app-text-muted)] mt-1">
-            Your summary is ready. Scroll down to review your AI triage report and digital twin snapshot.
-          </p>
-        </motion.div>
       )}
+
+      {/* Redesigned Generated Output Panel */}
+      <AnimatePresence>
+        {analysisDone && !analyzing && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            {/* Risk, Confidence, and Biomarker Highlights */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              
+              {/* Risk Score */}
+              <Card className="border border-[var(--app-border)] bg-[var(--app-surface)] flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-red-500/10 rounded-full filter blur-xl pointer-events-none" />
+                <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-text-muted)] mb-4">MASIM Risk Score</h4>
+                
+                <div className="relative w-24 h-24 flex items-center justify-center">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle cx="48" cy="48" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="6" fill="transparent" />
+                    <circle
+                      cx="48"
+                      cy="48"
+                      r="40"
+                      stroke="#ef4444"
+                      strokeWidth="7"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 40}
+                      strokeDashoffset={2 * Math.PI * 40 * (1 - 76 / 100)}
+                      strokeLinecap="round"
+                      style={{ filter: 'drop-shadow(0 0 6px rgba(239, 68, 68, 0.35))' }}
+                    />
+                  </svg>
+                  <div className="absolute flex flex-col items-center justify-center">
+                    <span className="text-3xl font-extrabold text-[var(--app-text-primary)] tabular-nums">76</span>
+                    <span className="text-[9px] text-[var(--app-text-muted)]">OF 100</span>
+                  </div>
+                </div>
+
+                <span className="mt-4 px-2.5 py-0.5 text-[10px] font-bold rounded bg-red-500/10 border border-red-500/20 text-red-400 uppercase tracking-wide">
+                  High Risk Range
+                </span>
+              </Card>
+
+              {/* Confidence Score */}
+              <Card className="border border-[var(--app-border)] bg-[var(--app-surface)] flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-[var(--accent-primary-muted)] rounded-full filter blur-xl pointer-events-none" />
+                <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-text-muted)] mb-4">Inference Confidence</h4>
+
+                <div className="relative w-24 h-24 flex items-center justify-center">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle cx="48" cy="48" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="6" fill="transparent" />
+                    <circle
+                      cx="48"
+                      cy="48"
+                      r="40"
+                      stroke="var(--accent-primary)"
+                      strokeWidth="7"
+                      fill="transparent"
+                      strokeDasharray={2 * Math.PI * 40}
+                      strokeDashoffset={2 * Math.PI * 40 * (1 - 94 / 100)}
+                      strokeLinecap="round"
+                      style={{ filter: 'drop-shadow(0 0 6px var(--accent-primary))' }}
+                    />
+                  </svg>
+                  <div className="absolute flex flex-col items-center justify-center">
+                    <span className="text-3xl font-extrabold text-[var(--app-text-primary)] tabular-nums">94%</span>
+                    <span className="text-[9px] text-[var(--app-text-muted)]">ACCURACY</span>
+                  </div>
+                </div>
+
+                <span className="mt-4 px-2.5 py-0.5 text-[10px] font-bold rounded bg-[var(--accent-primary-muted)] border border-[var(--accent-primary)]/20 text-[var(--accent-primary)] uppercase tracking-wide">
+                  Highly Convergent
+                </span>
+              </Card>
+
+              {/* Biomarker Summary Card */}
+              <Card className="border border-[var(--app-border)] bg-[var(--app-surface)] flex flex-col justify-between p-5">
+                <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-text-muted)] mb-3">Multimodal Biomarkers</h4>
+                
+                <div className="space-y-2 text-xs flex-1 overflow-y-auto max-h-[140px] pr-1 scrollbar-none">
+                  <div className="border-l-2 border-[var(--accent-primary)] pl-2">
+                    <p className="font-semibold text-[var(--app-text-primary)] text-[10px] uppercase">Visual CV</p>
+                    <p className="text-[9px] text-[var(--app-text-muted)] leading-tight">Atypical joint gaze duration (12% attention), motor stereotypies detected.</p>
+                  </div>
+                  <div className="border-l-2 border-[var(--accent-secondary)] pl-2">
+                    <p className="font-semibold text-[var(--app-text-primary)] text-[10px] uppercase">Speech Acoustic</p>
+                    <p className="text-[9px] text-[var(--app-text-muted)] leading-tight">Atypical flat pitch prosody variance, vocal repetition latency.</p>
+                  </div>
+                  <div className="border-l-2 border-purple-400 pl-2">
+                    <p className="font-semibold text-[var(--app-text-primary)] text-[10px] uppercase">Neural EEG</p>
+                    <p className="text-[9px] text-[var(--app-text-muted)] leading-tight">Anomalous frontal Theta/Beta power ratio (TBR = 4.75).</p>
+                  </div>
+                </div>
+              </Card>
+
+            </div>
+
+            {/* Complete notification */}
+            <div className="rounded-xl border border-[color-mix(in_srgb,var(--accent-success)_30%,var(--app-border))] bg-[color-mix(in_srgb,var(--accent-success)_8%,var(--app-surface))] p-5 text-center">
+              <p className="text-base font-semibold text-[var(--app-text-primary)]">Pre-screening analysis complete</p>
+              <p className="text-xs text-[var(--app-text-muted)] mt-1">
+                Your combined screening data is ready. Review the Explainable AI report and Developmental Twin projection below.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -505,6 +804,7 @@ export default function PreScreeningHub() {
             onRun={runAnalysis}
             checklist={analysisChecklist}
             riskScore={behavioralRiskScore}
+            progress={analysisProgress}
           />
         );
       default:

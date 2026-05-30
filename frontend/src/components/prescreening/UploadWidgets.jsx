@@ -62,6 +62,12 @@ export function DropZone({ accept, label, sublabel, icon, onFile, hasFile, fileN
   );
 }
 
+function resolveCssVar(varName, fallback) {
+  if (typeof window === 'undefined') return fallback;
+  const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  return val || fallback;
+}
+
 export function EegCanvas({ active }) {
   const canvasRef = useRef(null);
   const tRef = useRef(0);
@@ -96,16 +102,22 @@ export function EegCanvas({ active }) {
       }
       tRef.current += 0.04;
       const t = tRef.current;
+      
+      const inputBg = resolveCssVar('--app-input-bg', '#0b0f14');
+      const textMuted = resolveCssVar('--app-text-muted', '#94a3b8');
+      const accentPrimary = resolveCssVar('--accent-primary', '#00ffcc');
+
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = 'var(--app-input-bg)';
+      ctx.fillStyle = inputBg;
       ctx.fillRect(0, 0, w, h);
       const rowH = h / channels;
       for (let ch = 0; ch < channels; ch++) {
         const y0 = rowH * ch + rowH / 2;
         ctx.beginPath();
-        ctx.strokeStyle = `color-mix(in srgb, var(--accent-primary) ${35 + ch * 8}%, transparent)`;
+        ctx.strokeStyle = accentPrimary;
         ctx.lineWidth = 1.2;
+        ctx.globalAlpha = 0.35 + ch * 0.08;
         for (let x = 0; x <= w; x += 2) {
           const phase = ch * 1.7 + t * (1.2 + ch * 0.15);
           const y =
@@ -117,7 +129,8 @@ export function EegCanvas({ active }) {
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
-        ctx.fillStyle = 'var(--app-text-muted)';
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = textMuted;
         ctx.font = '10px DM Sans, sans-serif';
         ctx.fillText(`Ch${ch + 1}`, 6, y0 - rowH * 0.35);
       }
@@ -192,7 +205,11 @@ export function AudioWaveform({ url, active }) {
         canvas.width = w * dpr;
         canvas.height = h * dpr;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.fillStyle = 'var(--app-input-bg)';
+        
+        const inputBg = resolveCssVar('--app-input-bg', '#0b0f14');
+        const accentPrimary = resolveCssVar('--accent-primary', '#00ffcc');
+
+        ctx.fillStyle = inputBg;
         ctx.fillRect(0, 0, w, h);
         const peaks = peaksRef.current;
         const mid = h / 2;
@@ -200,7 +217,7 @@ export function AudioWaveform({ url, active }) {
         if (peaks && peaks.length) {
           const scale = peaks.length / w;
           ctx.beginPath();
-          ctx.strokeStyle = 'var(--accent-primary)';
+          ctx.strokeStyle = accentPrimary;
           ctx.globalAlpha = 0.75;
           ctx.lineWidth = 1;
           for (let x = 0; x < w; x++) {
@@ -216,7 +233,7 @@ export function AudioWaveform({ url, active }) {
         const s = scanRef.current;
         const grad = ctx.createLinearGradient(s - 50, 0, s + 50, 0);
         grad.addColorStop(0, 'transparent');
-        grad.addColorStop(0.5, 'color-mix(in srgb, var(--accent-primary) 12%, transparent)');
+        grad.addColorStop(0.5, accentPrimary + '20');
         grad.addColorStop(1, 'transparent');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, w, h);
