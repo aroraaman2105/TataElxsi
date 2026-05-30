@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BrandLogo, isNavActive } from './Sidebar';
 import { usePersona } from '../context/PersonaContext';
-import { getNavItemsForPersona } from '../config/personas';
+import { getNavItemsForPersona } from '../config/routes';
 
 export default function Navbar({ onMenuClick }) {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { usePersona } from '../context/PersonaContext';
-import { getNavItemsForPersona } from '../config/personas';
+import { getNavItemsForPersona, getNavSections, isNavActive } from '../config/routes';
 
 export function BrandLogo({ onClose }) {
   const navigate = useNavigate();
@@ -31,10 +31,7 @@ export function BrandLogo({ onClose }) {
   );
 }
 
-export function isNavActive(pathname, item) {
-  if (item.end) return pathname === item.to;
-  return pathname === item.to || pathname.startsWith(`${item.to}/`);
-}
+export { isNavActive } from '../config/routes';
 
 function SidebarNavItem({ item, onClose }) {
   const navigate = useNavigate();
@@ -48,16 +45,16 @@ function SidebarNavItem({ item, onClose }) {
         onClose?.();
         navigate(item.to);
       }}
-      className={`relative w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-150 text-left border ${
+      className={`relative w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors duration-150 text-left border ${
         active
           ? 'sidebar-nav-active'
           : 'text-slate-400 hover:text-slate-200 hover:bg-white/8 border-transparent'
       }`}
     >
       {active && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-[var(--accent-primary)]" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-[var(--accent-primary)]" />
       )}
-      <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
       </svg>
       <span className="font-medium text-sm">{item.label}</span>
@@ -65,10 +62,26 @@ function SidebarNavItem({ item, onClose }) {
   );
 }
 
+function NavSection({ label, items, onClose }) {
+  if (!items.length) return null;
+  return (
+    <div className="mb-3">
+      {label && (
+        <p className="px-4 py-1.5 text-[10px] uppercase tracking-wider text-slate-600 font-semibold">{label}</p>
+      )}
+      <div className="space-y-0.5">
+        {items.map((item) => (
+          <SidebarNavItem key={item.to} item={item} onClose={onClose} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Sidebar({ mobileOpen = false, onClose }) {
   const { persona, personaConfig, clearPersona } = usePersona();
   const navigate = useNavigate();
-  const navItems = getNavItemsForPersona(persona);
+  const { main, shared } = getNavSections(persona);
 
   const handleSwitchRole = () => {
     onClose?.();
@@ -105,10 +118,9 @@ export default function Sidebar({ mobileOpen = false, onClose }) {
         </div>
       )}
 
-      <nav className="flex-1 p-3 sm:p-4 space-y-1 overflow-y-auto">
-        {navItems.map((item) => (
-          <SidebarNavItem key={item.label} item={item} onClose={onClose} />
-        ))}
+      <nav className="flex-1 p-3 sm:p-4 overflow-y-auto">
+        <NavSection items={main} onClose={onClose} />
+        <NavSection label="Shared" items={shared} onClose={onClose} />
       </nav>
 
       <div className="p-4 border-t border-white/10 space-y-3">
@@ -119,13 +131,6 @@ export default function Sidebar({ mobileOpen = false, onClose }) {
         >
           Switch role
         </button>
-        <div className="glass-card p-3 rounded-xl border border-[#00d4ff]/20">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full status-live-dot animate-pulse" />
-            <p className="text-xs text-slate-500">AI Assistant</p>
-          </div>
-          <p className="text-sm text-neon-blue font-medium mt-1">Ready for demo</p>
-        </div>
       </div>
     </aside>
   );
