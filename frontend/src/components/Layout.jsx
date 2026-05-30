@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import AmbientBackground from './AmbientBackground';
+import PersonaBanner from './PersonaBanner';
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,6 +26,7 @@ export default function Layout() {
       )}
 
       <main className="flex-1 p-4 sm:p-6 overflow-auto relative z-0">
+        <PersonaBanner />
         <Outlet />
       </main>
     </div>
